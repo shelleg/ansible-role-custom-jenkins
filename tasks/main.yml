@@ -80,6 +80,11 @@
   tags:
     - plugins
 
+- name: "Add credentials"
+  include: "cj-add-all-credentials.yml"
+    tags:
+    - mytest
+
 ### configure look & feel
 
 - name: "11 :: Enable jenkins material theme - if requested config & restart"
