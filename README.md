@@ -5,6 +5,7 @@ Ansible Role Custom Jenkins
 
 This role will attempt to deliver a customized [Jenkins](http://www.jenkis-ci.org); there is no difference from the "regular Vanilla [Jenkins](http://www.jenkis-ci.org)" except for it's built in configurations ...
 I hope this role will not be too opinionated ;) ...
+P.S I couldn;t of chosen a better icon/log myself ;) - Credits to -> [masanobu imai](https://github.com/masanobuimai)
 <br/><br/><br/><br/>
 
 State of Mind
