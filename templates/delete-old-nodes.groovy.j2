@@ -1,0 +1,22 @@
+import jenkins.model.*
+import hudson.model.*
+import hudson.slaves.*
+import hudson.plugins.sshslaves.*
+import java.util.ArrayList;
+import hudson.slaves.EnvironmentVariablesNodeProperty.Entry;
+
+def newNodes = [];
+
+Jenkins jenkins = Jenkins.instance
+for (Node node in jenkins.nodes) {
+
+{% for new_node in jenkins_nodes %}
+      if ("$node.nodeName" == "{{ new_node.name }}") {
+          continue;
+      }
+{% endfor %}
+
+    println "Delete this old module - $node.nodeName was found!"
+    jenkins.removeNode(node)
+}
+jenkins.save()
