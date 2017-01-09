@@ -167,6 +167,7 @@ Full featured + proxy -> end of play should result with http://custom-jenkins:80
         #- role: jenkins-populate-jobs      # planned adding your own jobs via seperate addon role [ WIP see `tasks/cj-seed.yml` as a starting point ]
 
 Custom Jenkins - disable defaults:
+
     - hosts: custom-jenkins
       become: true
       roles:                                
