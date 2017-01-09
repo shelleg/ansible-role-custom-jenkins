@@ -1,0 +1,127 @@
+---
+jenkins_base_plugins:
+  - { name: "bouncycastle-api", version: "2.16.0", enabled: "true", extention: "hpi" }
+  - { name: "structs", version: "1.5", enabled: "true", extention: "hpi" }
+  - { name: "workflow-step-api", version: "2.6", enabled: "true", extention: "hpi" }
+  - { name: "workflow-scm-step", version: "2.3", enabled: "true", extention: "hpi" }
+  - { name: "credentials", version: "2.1.10", enabled: "true", extention: "hpi" }
+  - { name: "ssh-credentials", version: "1.12", enabled: "true", extention: "hpi" }
+  - { name: "git-client", version: "2.1.0", enabled: "true", extention: "hpi" }
+  - { name: "scm-api", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "junit", version: "1.19", enabled: "true", extention: "hpi" }
+  - { name: "display-url-api", version: "0.5", enabled: "true", extention: "hpi" }
+  - { name: "mailer", version: "1.18", enabled: "true", extention: "hpi" }
+  - { name: "script-security", version: "1.24", enabled: "true", extention: "hpi" }
+  - { name: "matrix-project", version: "1.7.1", enabled: "true", extention: "hpi" }
+  - { name: "git", version: "3.0.1", enabled: "true", extention: "hpi" }
+  - { name: "timestamper", version: "1.8.7", enabled: "true", extention: "hpi" }
+
+jenkins_goodie_plugins:
+  - { name: "email-ext", version: "2.52", enabled: "true", extention: "hpi" }
+  - { name: "ssh-slaves", version: "1.12", enabled: "true", extention: "hpi" }
+  - { name: "workflow-aggregator", version: "2.4", enabled: "true", extention: "hpi" }
+  - { name: "plain-credentials", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "token-macro", version: "2.0", enabled: "true", extention: "hpi" }
+  - { name: "subversion", version: "2.7.1", enabled: "true", extention: "hpi" }
+  - { name: "git-server", version: "1.7", enabled: "true", extention: "hpi" }
+  - { name: "job-dsl", version: "1.53", enabled: "true", extention: "hpi" }
+  - { name: "build-flow-plugin", version: "0.20", enabled: "true", extention: "hpi" }
+  - { name: "ant", version: "1.4", enabled: "true", extention: "hpi" }
+  - { name: "gradle", version: "1.25", enabled: "true", extention: "hpi" }
+  - { name: "maven-plugin", version: "2.14", enabled: "true", extention: "hpi" }
+  - { name: "pam-auth", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "envinject", version: "1.93.1", enabled: "true", extention: "hpi" }
+  - { name: "build-timeout", version: "1.18", enabled: "true", extention: "hpi" }
+  - { name: "cloudbees-folder", version: "5.15", enabled: "true", extention: "hpi" }
+  - { name: "parameterized-trigger", version: "2.32", enabled: "true", extention: "hpi" }
+  - { name: "ansicolor", version: "0.4.3", enabled: "true", extention: "hpi" }
+
+
+jenkins_github_plugins:
+  - { name: "github", version: "1.25.0", enabled: "true", extention: "hpi" }
+  - { name: "github-api", version: "1.82", enabled: "true", extention: "hpi" }
+#  - { name: "github-organization-folder", version: "1.5", enabled: "true", extention: "hpi" }
+
+jenkins_blueocean_version: "1.0.0-b14"
+jenkins_blueocean_plugins:
+# Blue ocean
+  - { name: "blueocean", version: "{{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-web", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-pipeline-api-impl", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-personalization", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-rest", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-jwt", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-config", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-autofavorite", version: "0.5", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-display-url", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-i18n", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-dashboard", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-rest-impl", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-events", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-commons", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+
+jenkins_pipeline_plugins:
+# pipelne plugin
+  - { name: "build-pipeline-plugin", version: "1.5.6", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-graph-analysis", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-stage-step", version: "2.2", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-stage-view", version: "2.4", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-milestone-step", version: "1.2", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-build-step", version: "2.4", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-stage-tags-metadata", version: "0.7.1", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-input-step", version: "2.5", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-model-declarative-agent", version: "0.7.1", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-rest-api", version: "2.4", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-model-definition", version: "0.7.1", enabled: "true", extention: "hpi" }
+  - { name: "pipeline-model-api", version: "0.7.1", enabled: "true", extention: "hpi" }
+
+jenkins_workflow_plugins:
+# workflow plugin
+  - { name: "workflow-durable-task-step", version: "2.5", enabled: "true", extention: "hpi" }
+  - { name: "workflow-cps", version: "2.22", enabled: "true", extention: "hpi" }
+  - { name: "workflow-basic-steps", version: "2.3", enabled: "true", extention: "hpi" }
+  - { name: "workflow-job", version: "2.9", enabled: "true", extention: "hpi" }
+  - { name: "workflow-support", version: "2.11", enabled: "true", extention: "hpi" }
+  - { name: "docker-workflow", version: "1.9.1", enabled: "true", extention: "hpi" }
+  - { name: "workflow-cps-global-lib", version: "2.5", enabled: "true", extention: "hpi" }
+  - { name: "workflow-multibranch", version: "2.9.2", enabled: "true", extention: "hpi" }
+  - { name: "workflow-api", version: "2.8", enabled: "true", extention: "hpi" }
+  - { name: "workflow-aggregator", version: "2.4", enabled: "true", extention: "hpi" }
+
+jenkins_other_plugins:
+  - { name: "icon-shim", version: "2.0.3", enabled: "true", extention: "hpi" }
+  - { name: "authentication-tokens", version: "1.3", enabled: "true", extention: "hpi" }
+  - { name: "branch-api", version: "1.11.1", enabled: "true", extention: "hpi" }
+  - { name: "run-condition", version: "1.0", enabled: "true", extention: "hpi" }
+  - { name: "momentjs", version: "1.1.1", enabled: "true", extention: "hpi" }
+  - { name: "metrics", version: "3.1.2.9", enabled: "true", extention: "hpi" }
+  - { name: "nodejs", version: "0.2.2", enabled: "true", extention: "hpi" }
+  - { name: "ace-editor", version: "1.1", enabled: "true", extention: "hpi" }
+  - { name: "ws-cleanup", version: "0.32", enabled: "true", extention: "hpi" }
+  - { name: "matrix-auth", version: "1.4", enabled: "true", extention: "hpi" }
+  - { name: "jquery-detached", version: "1.2.1", enabled: "true", extention: "hpi" }
+  - { name: "docker-commons", version: "1.5", enabled: "true", extention: "hpi" }
+  - { name: "durable-task", version: "1.12", enabled: "true", extention: "hpi" }
+  - { name: "mapdb-api", version: "1.0.9.0", enabled: "true", extention: "hpi" }
+  - { name: "description-setter", version: "1.10", enabled: "true", extention: "hpi" }
+  - { name: "external-monitor-job", version: "1.6", enabled: "true", extention: "hpi" }
+  - { name: "sse-gateway", version: "1.10", enabled: "true", extention: "hpi" }
+  - { name: "handlebars", version: "1.1.1", enabled: "true", extention: "hpi" }
+  - { name: "ldap", version: "1.13", enabled: "true", extention: "hpi" }
+  - { name: "clone-workspace-scm", version: "0.6", enabled: "true", extention: "hpi" }
+  - { name: "jquery", version: "1.11.2-0", enabled: "true", extention: "hpi" }
+  - { name: "favorite", version: "2.0.4", enabled: "true", extention: "hpi" }
+  - { name: "job-node-stalker", version: "1.0.5", enabled: "true", extention: "hpi" }
+  - { name: "credentials-binding", version: "1.10", enabled: "true", extention: "hpi" }
+  - { name: "seed", version: "2.1.4", enabled: "true", extention: "hpi" }
+  - { name: "javadoc", version: "1.4", enabled: "true", extention: "hpi" }
+  - { name: "jackson2-api", version: "2.7.3", enabled: "true", extention: "hpi" }
+  - { name: "github-branch-source", version: "1.10.1", enabled: "true", extention: "hpi" }
+  - { name: "antisamy-markup-formatter", version: "1.5", enabled: "true", extention: "hpi" }
+  - { name: "windows-slaves", version: "1.2", enabled: "true", extention: "hpi" }
+  - { name: "variant", version: "1.1", enabled: "true", extention: "hpi" }
+  - { name: "multiple-scms", version: "0.6", enabled: "true", extention: "hpi" }
+  - { name: "conditional-buildstep", version: "1.3.5", enabled: "true", extention: "hpi" }
+  - { name: "nested-view", version: "1.14", enabled: "true", extention: "hpi" }
+  - { name: "resource-disposer", version: "0.3", enabled: "true", extention: "hpi" }
+

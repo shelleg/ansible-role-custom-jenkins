@@ -1,0 +1,41 @@
+---
+- include: "cj-cli-login.yml"
+
+- name: "Delete seed job(s)"
+  jenkins_job:
+    name: "{{ item }}"
+    user: "{{ jenkins_local_admin_users[0].username }}"
+    password: "{{ jenkins_local_admin_users[0].password }}"
+    state: absent
+  with_items:
+    - seed
+
+- name: "Create seed job(s)"
+  jenkins_job:
+    config: "{{ lookup('file', 'files/{{ item }}.xml') }}"
+    name: "{{ item }}"
+    user: "{{ jenkins_local_admin_users[0].username }}"
+    password: "{{ jenkins_local_admin_users[0].password }}"
+  with_items:
+    - seed
+
+- service:
+    name: jenkins
+    state: restarted
+  notify: "service jenkins restart"
+
+- meta: flush_handlers
+
+- name: "Auth check (again)"
+  include: "cj-auth_check.yml"
+
+- name: "Login from CLI"
+  include: "cj-cli-login.yml"
+
+- name: "Trigger seed job"
+  shell: >
+    java -jar {{ jenkins_cli_jar_location }} \
+    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
+    build -s {{ item }}
+  with_items:
+    - seed

@@ -1,0 +1,47 @@
+---
+- name: "install deps"
+  package:
+    name:
+      - curl
+      - libselinux-python
+      - python-pip
+      - vim
+      - net-tools
+      - unzip
+      - vim
+    state: installed
+
+- name: "Add jenkins rpm key"
+  rpm_key:
+    state: present
+    key: "{{ jenkins_repo_key_url }}"
+
+- name: "Add Jenkins rpm repo"
+  get_url:
+    url: "{{ jenkins_repo_url }}"
+    dest: /etc/yum.repos.d/jenkins.repo
+
+- name: "Enable yum caching considering jenkins rpm size"
+  lineinfile:
+    dest: /etc/yum.conf
+    state: present
+    regexp: '^keepcache=0'
+    line: 'keepcache=1'
+  when: jenkins_set_proxy is not defined
+
+- name: "Jenkins Install"
+  package:
+    name: jenkins
+    state: installed
+  register: result
+  until: '"failed" not in result'
+  retries: 5
+  delay: 10
+
+- name: "Install pip requierments"
+  include: "cj-pip-reqs.yml"
+
+- name: "Flush iptables"
+  command: >
+    iptables -F
+  ignore_errors: true

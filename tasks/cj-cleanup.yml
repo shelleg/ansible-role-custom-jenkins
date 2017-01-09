@@ -1,0 +1,20 @@
+---
+- name: "Cleanup"
+  file:
+    path: "{{ item }}"
+    state: absent
+  with_items:
+  - "{{ jenkins_home }}"
+  - "{{ jenkins_log_dir }}"
+  - "{{ jenkins_cache_dir }}"
+  tags:
+  - cleanup
+  notify: "stop jenkins"
+- meta: flush_handlers
+
+- name: "remove jenkins package"
+  package:
+    name: jenkins
+    state: absent
+  tags:
+  - cleanup

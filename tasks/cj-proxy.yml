@@ -1,0 +1,33 @@
+---
+
+# allow customization from playbook | group_vars with noproxy_hosts var merge
+- name: "If jenkins_no_proxy_hosts notset set it"
+  set_fact:
+    jenkins_no_proxy_hosts: []
+  when: jenkins_no_proxy_hosts is not defined
+
+- name: "If 127.0.0.1 not in noproxy_hosts or jenkins_no_proxy_hosts - append it"
+  set_fact:
+    jenkins_no_proxy_hosts:
+      - '127.0.0.1'
+  when: (noproxy_hosts is defined) and (('127.0.0.1' not in noproxy_hosts) or ('127.0.0.1' not in jenkins_no_proxy_hosts))
+
+- name: "merge noproxy_hosts (if defined) with jenkins_no_proxy_hosts"
+  set_fact:
+    jenkins_no_proxy_hosts: "{{ noproxy_hosts }} + {{ jenkins_no_proxy_hosts }}"
+  when: (noproxy_hosts is defined)
+
+- name: "Filter duplicates"
+  set_fact:
+    jenkins_no_proxy_hosts: "{{ jenkins_no_proxy_hosts | unique }}"
+
+- debug: var=jenkins_no_proxy_hosts
+
+- name: "update Jenkins proxy setting"
+  template:
+    src: "proxy.xml.j2"
+    dest: "{{ jenkins_proxy_conf_file }}"
+    owner: "{{ jenkins_runas_user | d('jenkins')}}"
+    group: "{{ jenkins_runas_group | d('jenkins')}}"
+    mode: 0755
+  register: proxy_config

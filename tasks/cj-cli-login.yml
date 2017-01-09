@@ -1,0 +1,9 @@
+---
+- name: "Jenkins login when auth is enabled"
+  shell: >
+    java -jar {{ jenkins_cli_jar_location }} \
+    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
+    -noKeyAuth login \
+    --username {{ jenkins_local_admin_users[0].username }} \
+    --password {{ jenkins_local_admin_users[0].password }}
+  when: (jenkins_auth_enabled is defined) and (jenkins_auth_enabled | bool)

@@ -1,0 +1,6 @@
+---
+jenkins_repo_url_gratest_n_latest: http://pkg.jenkins-ci.org/redhat/jenkins.repo
+jenkins_repo_url_latest_lts: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+jenkins_repo_key_url: http://pkg.jenkins.io/redhat/jenkins.io.key
+jenkins_pkg_url: http://pkg.jenkins.io/redhat
+jenkins_conf_file: /etc/sysconfig/jenkins

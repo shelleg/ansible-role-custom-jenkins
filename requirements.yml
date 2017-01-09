@@ -1,0 +1,5 @@
+---
+
+- src: https://github.com/shelleg/ansible-role-oracle-java.git
+  version: 2.9.0
+  name: oracle-java

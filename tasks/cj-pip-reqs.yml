@@ -1,0 +1,8 @@
+---
+- name: "Install pip requirements"
+  pip:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - lxml
+    - python-jenkins

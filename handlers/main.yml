@@ -1,0 +1,33 @@
+---
+# handlers file for ansible-role-custom-jenkins
+
+- name: "restart jenkins"
+  service:
+    name: jenkins
+    state: restarted
+  # Reference: http://stackoverflow.com/a/31618968/1851299
+  notify: "wait for jenkins http listen port"
+  listen: "service jenkins restart"
+
+- name: "start jenkins"
+  service:
+    name: jenkins
+    state: started
+  # Reference: http://stackoverflow.com/a/31618968/1851299
+  notify: "wait for jenkins http listen port"
+  listen: "service jenkins start"
+
+- name: "stop jenkins"
+  service:
+    name: jenkins
+    state: stopped
+  listen: "service jenkins stop"
+
+- name: "wait for jenkins http listen port"
+  uri:
+    url: "http://localhost:{{ jenkins_http_port }}{{ jenkins_context | default('') }}/login"
+    status_code: 200
+  register: jenkins_login_page
+  until: jenkins_login_page.status == 200
+  retries: 60
+  delay: 3

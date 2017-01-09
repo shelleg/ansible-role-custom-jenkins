@@ -1,0 +1,58 @@
+---
+- name: "Setting fact for jenkins_plugins"
+  set_fact:
+    jenkins_plugins: []
+
+- name: "Setting fact for jenkins_plugins -> wizard plugins"
+  set_fact:
+      jenkins_plugins: "{{ jenkins_wizard_plugins }}"
+  when: (jenkins_wizard is defined ) and (jenkins_wizard | bool)
+
+- name: "merge plugin lists -> jenkins theme"
+  set_fact:
+    jenkins_plugins: "{{ jenkins_plugins + jenkins_theme_plugins }}"
+  when: (jenkins_theme is defined) and (jenkins_theme | bool)
+
+- name: "merge plugin lists -> jenkins auth strategy"
+  set_fact:
+    jenkins_plugins: "{{ jenkins_plugins + jenkins_setup_matrix_auth_strategy_plugins }}"
+  when: (jenkins_setup_matrix_auth_strategy is defined) and (jenkins_setup_matrix_auth_strategy | bool)
+
+- name: "merge plugin lists -> jenkins DSL plugin"
+  set_fact:
+    jenkins_plugins: "{{ jenkins_plugins + jenkins_dsl_plugins }}"
+  when: (jenkins_setup_dsl_plugins is defined) and (jenkins_setup_dsl_plugins | bool)
+
+- block:
+  - name: "Setting fact for jenkins_plugins -> base"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_base_plugins }}"
+    when: (jenkins_base is defined) and (jenkins_base | bool)
+
+  - name: "merge plugin lists -> base + goodies"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_plugins }} + {{ jenkins_goodie_plugins }}"
+    when: (jenkins_goodies is defined) and (jenkins_goodies | bool)
+
+  - name: "merge plugin lists -> github"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_plugins }} + {{ jenkins_github_plugins }}"
+    when: (jenkins_github is defined) and (jenkins_github | bool)
+
+  - name: "merge plugin lists -> pipeline"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_plugins }} + {{ jenkins_pipeline_plugins }}"
+    when: (jenkins_pipeline is defined) and (jenkins_pipeline | bool)
+
+  - name: "merge plugin lists -> blueocean"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_plugins }} + {{ jenkins_blueocean_plugins }}"
+    when: (jenkins_blueocean is defined) and (jenkins_blueocean | bool)
+
+  - name: "merge plugin lists -> workflow"
+    set_fact:
+      jenkins_plugins: "{{ jenkins_plugins }} + {{ jenkins_workflow_plugins }}"
+    when: (jenkins_workflow is defined) and (jenkins_workflow | bool)
+
+  when: (jenkins_wizard is not defined ) and (jenkins_wizard | bool)
+

@@ -1,0 +1,9 @@
+<proxy>
+  <name>{{ jenkins_proxy_host }}</name>
+  <port>{{ jenkins_proxy_port }}</port>
+  <noProxyHost>{% for host in jenkins_no_proxy_hosts%}
+{{ host }}
+{% endfor %}
+  </noProxyHost>
+  <testUrl>http://updates.jenkins-ci.org/update-center.json</testUrl>
+</proxy>
