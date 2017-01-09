@@ -82,8 +82,6 @@
 
 - name: "Add credentials"
   include: "cj-add-all-credentials.yml"
-    tags:
-    - mytest
 
 ### configure look & feel
 

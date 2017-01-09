@@ -6,4 +6,5 @@
     -noKeyAuth login \
     --username {{ jenkins_local_admin_users[0].username }} \
     --password {{ jenkins_local_admin_users[0].password }}
+  ignore_errors: true
   when: (jenkins_auth_enabled is defined) and (jenkins_auth_enabled | bool)

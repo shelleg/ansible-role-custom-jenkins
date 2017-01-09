@@ -30,6 +30,30 @@
 - debug: var=ips
 
 
+- service:
+    name: jenkins
+    state: restarted
+  notify: "service jenkins restart"
+- meta: flush_handlers
+
+- name: "Python script for add public-key of user jenkins to the first 'admin' user"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/tmp/{{ item }}"
+    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
+    group:  "{{ jenkins_runas_group | d('jenkins')}}"
+    mode: 0755
+  with_items:
+    - update-user-xml.python
+
+
+- name: "Execute the script: /tmp/update-user-xml.python"
+  shell: >
+    /tmp/update-user-xml.python
+  ignore_errors: true
+  notify: "service jenkins restart"
+  register: result
+
 
 #- set_fact:
 #    jenkins_plugin_install_params:

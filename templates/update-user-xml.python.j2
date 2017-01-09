@@ -1,0 +1,29 @@
+#!/bin/env python
+
+from xml.etree.ElementTree import parse, Element, SubElement
+from os.path import expanduser
+home = expanduser("~")
+#from xml import etree
+user_file = "{{ jenkins_home }}/users/{{ jenkins_local_admin_users[0].username }}/config.xml"
+doc = parse(user_file)
+root = doc.getroot()
+home = expanduser('~jenkins')
+public_key=open(home+'/.ssh/id_rsa.pub').read().replace('\n','')
+
+properties = root.find('.//properties')
+the_tag = root.find('.//authorizedKeys')
+##print the_tag
+if ( the_tag is not None ):
+  #print "Need to update"
+  if ( the_tag.text.find(public_key) == -1 ):
+    print "The key will be added"
+    the_tag.text = the_tag.text + '\n' + public_key
+  else:
+    print "The key is already exist"
+    exit(0)
+else:
+  print "Need to create a new tag"
+  el1 = SubElement(properties, 'org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl')
+  el2 = SubElement(el1, 'authorizedKeys')
+  el2.text=public_key
+doc.write(user_file, xml_declaration=True)
