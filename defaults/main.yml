@@ -21,7 +21,7 @@ jenkins_plugins_tmp_folder: /tmp/plugins
 
 # use jenkins behind proxy
 # TODO: find a way to configure via groovy without authentication ... { already have template with auth }
-jenkins_set_proxy: false
+jenkins_set_proxy: true
 jenkins_proxy_host: "{{ proxy_server }}"
 jenkins_proxy_port: "{{ proxy_port |d('3148') }}"
 #jenkins_no_proxy_hosts: will be set in tasks
@@ -188,3 +188,10 @@ jenkins_nodes:
   - { name: "linux03", host: "linux3.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
   - { name: "solaris01", host: "solaris1.domain.com", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
 
+jenkins_oracle_account_username: "ivan.prokhorov@gmail.com"
+jenkins_oracle_account_password: "Abrasha200"
+
+jenkins_tools_jdks:
+  - { name: "jdk-8u112", version: "jdk-8u112"}
+  - { name: "jdk-8u92", version: "jdk-8u92"}
+  - { name: "jdk-8u77", version: "jdk-8u77"}

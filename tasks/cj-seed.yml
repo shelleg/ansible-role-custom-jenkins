@@ -19,18 +19,9 @@
   with_items:
     - seed
 
-- service:
-    name: jenkins
-    state: restarted
-  notify: "service jenkins restart"
+- include: "cj-restart-jenkins.yml"
 
 - meta: flush_handlers
-
-- name: "Auth check (again)"
-  include: "cj-auth_check.yml"
-
-- name: "Login from CLI"
-  include: "cj-cli-login.yml"
 
 - name: "Trigger seed job"
   shell: >

@@ -10,6 +10,8 @@
     -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
     list-plugins | awk '{print $1}'
   register: plugins_installed
+  become: true
+  become_user: "{{ jenkins_runas_user }}"
   changed_when: false
 
 - name: "Install Jenkins plugins | method implemented for online installations"
@@ -25,16 +27,18 @@
   until: ips.rc == 0
   retries: 10
   delay: 8
-  notify: "restart jenkins"
+  become: true
+  become_user: "{{ jenkins_runas_user }}"
 
 - debug: var=ips
 
+## We need to restart to run scripts in init.groovy.d with installed plugins
+- include: "cj-restart-jenkins.yml"
 
-- service:
+- name: "stop jenkins"
+  service:
     name: jenkins
-    state: restarted
-  notify: "service jenkins restart"
-- meta: flush_handlers
+    state: stopped
 
 - name: "Python script for add public-key of user jenkins to the first 'admin' user"
   template:
@@ -46,13 +50,16 @@
   with_items:
     - update-user-xml.python
 
-
 - name: "Execute the script: /tmp/update-user-xml.python"
   shell: >
     /tmp/update-user-xml.python
   ignore_errors: true
-  notify: "service jenkins restart"
   register: result
+
+- include: "cj-restart-jenkins.yml"
+
+- name: "Output of the last command"
+  debug: var=result
 
 
 #- set_fact:

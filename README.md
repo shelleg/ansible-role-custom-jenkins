@@ -196,7 +196,7 @@ Contributing
       notify: "service jenkins restart"
       with_items:
         - basic-security.groovy
-        - your scritp goes here ...
+        - your script goes here ...
 ```
 
 - Adding a new plugin set:

@@ -32,6 +32,7 @@
 - name: "04 :: Validate {{ jenkins_runas_user d('jenkins')}} has a valid ssh key"
   include: "cj-ssh_key.yml"
 
+
 - name: "05 :: Configure Jenkins via {{ jenkins_conf_file }}"
   template:
     src: "jenkins-config-{{ ansible_os_family }}.j2"
@@ -60,19 +61,20 @@
 # Make sure Jenkins starts, then configure Jenkins.
 ###
 - name: "08 :: Service start & enable"
-  service:
-    name: jenkins
-    state: started
-    enabled: yes
-#  when: config_changed.changed
-  tags:
-    - plugins
+  include: "cj-restart-jenkins.yml"
+#  service:
+#    name: jenkins
+#    state: started
+#    enabled: yes
+##  when: config_changed.changed
+#  tags:
+#    - plugins
 
-- name: "09 :: Check auth status"
-  include: "cj-auth_check.yml"
+#- name: "09 :: Check auth status"
+#  include: "cj-auth_check.yml"
 
-- name: "09.1 :: Cli Login"
-  include: "cj-cli-login.yml"
+#- name: "09.1 :: Cli Login"
+#  include: "cj-cli-login.yml"
 
 - name: "10 :: install recommanded plugins"
   include: "cj-plugins-online-install.yml"
@@ -85,8 +87,13 @@
 
 - name: "Add nodes"
   include: "cj-add-nodes.yml"
+
+- name: "Add JDK-s to tools"
+  include: "cj-add-tools-jdks.yml"
   tags:
     - mytest
+    - always
+
 ### configure look & feel
 
 - name: "11 :: Enable jenkins material theme - if requested config & restart"
@@ -112,11 +119,3 @@
 ###  setup e-mail ?
 #  when: jenkins_email is defined
 ###
-
-# logout of jenkins cli
-- name: "13 :: Jenkins logout when auth is enabled - we do not want to remain authenticated after play completes ..."
-  shell: >
-    java -jar {{ jenkins_cli_jar_location }} \
-    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
-    -noKeyAuth logout
-  when: (jenkins_auth_enabled is defined) and (jenkins_auth_enabled | bool)

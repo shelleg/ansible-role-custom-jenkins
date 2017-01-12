@@ -1,39 +1,36 @@
 ---
-- block:
-#  - name: "Find and delete nodes not defined in list 'jenkins_nodes'"
-  - set_fact:
-      the_groovy_script: "delete-old-nodes.groovy"
+- set_fact:
+    the_groovy_script: "delete-old-nodes.groovy"
 
-  - name: "Generate groovy script to remove unknown nodes"
-    template:
-      src: "{{ the_groovy_script }}.j2"
-      dest: "/tmp/{{ the_groovy_script }}"
-      owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-      group:  "{{ jenkins_runas_group | d('jenkins')}}"
+- name: "Generate groovy script to remove unknown nodes"
+  template:
+    src: "{{ the_groovy_script }}.j2"
+    dest: "/tmp/{{ the_groovy_script }}"
+    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
+    group:  "{{ jenkins_runas_group | d('jenkins')}}"
 
-  - name: "Execute the script: /tmp/{{ the_groovy_script }}"
-    shell: >
-      java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
-    #ignore_errors: true
-    register: result
-
-  - name: "Create nodes from list 'jenkins_nodes'"
-    set_fact:
-      the_groovy_script: "create-nodes.groovy"
-
-  - name: "Generate groovy script to create/update nodes"
-    template:
-      src: "{{ the_groovy_script }}.j2"
-      dest: "/tmp/{{ the_groovy_script }}"
-      owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-      group:  "{{ jenkins_runas_group | d('jenkins')}}"
-
-  - name: "Execute the script: /tmp/{{ the_groovy_script }}"
-    shell: >
-      java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
-    #ignore_errors: true
-    register: result
-
+- name: "Execute the script: /tmp/{{ the_groovy_script }}"
+  shell: >
+    java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
   become: true
-  become_user: jenkins
-#  become_user: "{{ jenkins_local_admin_users[0].username }}"
+  become_user: "{{ jenkins_runas_user }}"
+  register: result
+
+- name: "Create nodes from list 'jenkins_nodes'"
+  set_fact:
+    the_groovy_script: "create-nodes.groovy"
+
+- name: "Generate groovy script to create/update nodes"
+  template:
+    src: "{{ the_groovy_script }}.j2"
+    dest: "/tmp/{{ the_groovy_script }}"
+    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
+    group:  "{{ jenkins_runas_group | d('jenkins')}}"
+
+- name: "Execute the script: /tmp/{{ the_groovy_script }}"
+  shell: >
+    java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+  become: true
+  become_user: "{{ jenkins_runas_user }}"
+  register: result
+
