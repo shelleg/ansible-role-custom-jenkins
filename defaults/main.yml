@@ -171,22 +171,17 @@ jenkins_theme_plugins:
 jenkins_goodie_plugins:
   - { name: "greenballs" }
 
-jenkins_node_templates:
-  - { name: "linux-node-template", labels: "linux", home: "/home/jenkins", executors: "5" }
-  - { name: "windows-node-template", labels: "windows" }
-  - { name: "solaris-node-template", labels: "solaris" }
-  - { name: "aux-node-template", labels: "aux" }
-
 jenkins_nodes_credentials:
   - { name: "solaris-user", id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", username: "nodeuser", password: "test", description: "use this for solaris slaves" }
   - { name: "linux-user", id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", username: "jenkins_user", password: "toor", description: "use this for solaris slaves" }
   - { name: "aux-user", id: "4b2a3485-bf8b-429d-8b21-c19d6b60f198", username: "aux_jenkins_user", password: "tralala", description: "use this for AUX slaves" }
 
 jenkins_nodes:
-  - { name: "linux01", host: "linux1.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux02", host: "linux2.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux03", host: "linux3.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "solaris01", host: "solaris1.domain.com", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
+  - { name: "linux01", host: "linux1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
+  - { name: "linux02", host: "linux2.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
+  - { name: "linux03", host: "linux3.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
+  - { name: "solaris01", host: "solaris1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
+  - { name: "windows01", host: "win01.domain.com", launcher_type: "jnlp", ssh_port: "", credential_id: "", home: "c:\\\\jenkins", labels: "windows", executors: "5", description: "windows slave" }
 
 jenkins_oracle_account_username: "ivan.prokhorov@gmail.com"
 jenkins_oracle_account_password: "Abrasha200"
