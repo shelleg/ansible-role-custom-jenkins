@@ -9,25 +9,25 @@ def instance = Jenkins.getInstance()
 
 // disable signup
 def hudsonRealm = new HudsonPrivateSecurityRealm(false)
-{% for account in jenkins_local_admin_users %}
+{% for account in cj_local_admin_users %}
 hudsonRealm.createAccount('{{ account.username }}', '{{ account.password }}')
 {% endfor %}
-{% for account in jenkins_local_regular_users %}
+{% for account in cj_local_regular_users %}
 hudsonRealm.createAccount('{{ account.username }}', '{{ account.password }}')
 {% endfor %}
 instance.setSecurityRealm(hudsonRealm)
 instance.save()
 
 def strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
-{% for account in jenkins_local_admin_users %}
+{% for account in cj_local_admin_users %}
 strategy.add(Jenkins.ADMINISTER, "{{ account.username }}")
 {% endfor %}
-{% for account in jenkins_local_regular_users %}
+{% for account in cj_local_regular_users %}
 //strategy.add(hudson.model.View.READ, "{{ account.username }}")
 //strategy.add(hudson.model.Item.READ, "{{ account.username }}")
 strategy.add(Jenkins.READ, "{{ account.username }}")
 {% endfor %}
-{% if jenkins_allow_anon_read is defined %}
+{% if cj_allow_anon_read is defined %}
 strategy.add(hudson.model.View.READ, 'anonymous')
 strategy.add(hudson.model.Item.READ, 'anonymous')
 strategy.add(Jenkins.READ, 'anonymous')

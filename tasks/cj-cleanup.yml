@@ -4,9 +4,9 @@
     path: "{{ item }}"
     state: absent
   with_items:
-  - "{{ jenkins_home }}"
-  - "{{ jenkins_log_dir }}"
-  - "{{ jenkins_cache_dir }}"
+  - "{{ cj_home }}"
+  - "{{ cj_log_dir }}"
+  - "{{ cj_cache_dir }}"
   tags:
   - cleanup
   notify: "stop jenkins"

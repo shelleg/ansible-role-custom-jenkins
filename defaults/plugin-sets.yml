@@ -1,5 +1,5 @@
 ---
-jenkins_base_plugins:
+cj_base_plugins:
   - { name: "bouncycastle-api", version: "2.16.0", enabled: "true", extention: "hpi" }
   - { name: "structs", version: "1.5", enabled: "true", extention: "hpi" }
   - { name: "workflow-step-api", version: "2.6", enabled: "true", extention: "hpi" }
@@ -16,7 +16,7 @@ jenkins_base_plugins:
   - { name: "git", version: "3.0.1", enabled: "true", extention: "hpi" }
   - { name: "timestamper", version: "1.8.7", enabled: "true", extention: "hpi" }
 
-jenkins_goodie_plugins:
+cj_goodie_plugins:
   - { name: "email-ext", version: "2.52", enabled: "true", extention: "hpi" }
   - { name: "ssh-slaves", version: "1.12", enabled: "true", extention: "hpi" }
   - { name: "workflow-aggregator", version: "2.4", enabled: "true", extention: "hpi" }
@@ -37,30 +37,30 @@ jenkins_goodie_plugins:
   - { name: "ansicolor", version: "0.4.3", enabled: "true", extention: "hpi" }
 
 
-jenkins_github_plugins:
+cj_github_plugins:
   - { name: "github", version: "1.25.0", enabled: "true", extention: "hpi" }
   - { name: "github-api", version: "1.82", enabled: "true", extention: "hpi" }
 #  - { name: "github-organization-folder", version: "1.5", enabled: "true", extention: "hpi" }
 
-jenkins_blueocean_version: "1.0.0-b14"
-jenkins_blueocean_plugins:
+cj_blueocean_version: "1.0.0-b14"
+cj_blueocean_plugins:
 # Blue ocean
-  - { name: "blueocean", version: "{{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-web", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-pipeline-api-impl", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-personalization", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-rest", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-jwt", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-config", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean", version: "{{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-web", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-pipeline-api-impl", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-personalization", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-rest", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-jwt", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-config", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
   - { name: "blueocean-autofavorite", version: "0.5", enabled: "true", extention: "hpi" }
   - { name: "blueocean-display-url", version: "1.3", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-i18n", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-dashboard", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-rest-impl", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-events", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
-  - { name: "blueocean-commons", version: " {{ jenkins_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-i18n", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-dashboard", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-rest-impl", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-events", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
+  - { name: "blueocean-commons", version: " {{ cj_blueocean_version }}", enabled: "true", extention: "hpi" }
 
-jenkins_pipeline_plugins:
+cj_pipeline_plugins:
 # pipelne plugin
   - { name: "build-pipeline-plugin", version: "1.5.6", enabled: "true", extention: "hpi" }
   - { name: "pipeline-graph-analysis", version: "1.3", enabled: "true", extention: "hpi" }
@@ -75,7 +75,7 @@ jenkins_pipeline_plugins:
   - { name: "pipeline-model-definition", version: "0.7.1", enabled: "true", extention: "hpi" }
   - { name: "pipeline-model-api", version: "0.7.1", enabled: "true", extention: "hpi" }
 
-jenkins_workflow_plugins:
+cj_workflow_plugins:
 # workflow plugin
   - { name: "workflow-durable-task-step", version: "2.5", enabled: "true", extention: "hpi" }
   - { name: "workflow-cps", version: "2.22", enabled: "true", extention: "hpi" }
@@ -88,7 +88,7 @@ jenkins_workflow_plugins:
   - { name: "workflow-api", version: "2.8", enabled: "true", extention: "hpi" }
   - { name: "workflow-aggregator", version: "2.4", enabled: "true", extention: "hpi" }
 
-jenkins_other_plugins:
+cj_other_plugins:
   - { name: "icon-shim", version: "2.0.3", enabled: "true", extention: "hpi" }
   - { name: "authentication-tokens", version: "1.3", enabled: "true", extention: "hpi" }
   - { name: "branch-api", version: "1.11.1", enabled: "true", extention: "hpi" }

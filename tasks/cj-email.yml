@@ -2,7 +2,7 @@
 - name: "Setup e-mail for Jenkins"
   template:
     src: hudson.tasks.Mailer.xml.j2
-    dest: "{{ jenkins_lib }}/hudson.tasks.Mailer.xml"
+    dest: "{{ cj_lib }}/hudson.tasks.Mailer.xml"
     owner: jenkins
     group: jenkins
     mode: 0644

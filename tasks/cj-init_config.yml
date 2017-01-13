@@ -5,18 +5,18 @@
 
 - name: "Create Jenkins init script dir"
   file:
-    path: "{{ jenkins_home }}/init.groovy.d"
+    path: "{{ cj_home }}/init.groovy.d"
     state: directory
-    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-    group:  "{{ jenkins_runas_group | d('jenkins')}}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
     mode: 0755
 
 - name: "Generate groovy script for jenkins bootstrap execution"
   template:
     src: "{{ item }}.j2"
-    dest: "{{ jenkins_init_dir }}/{{ item }}"
-    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-    group:  "{{ jenkins_runas_group | d('jenkins')}}"
+    dest: "{{ cj_init_dir }}/{{ item }}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
   notify: "service jenkins restart"
   with_items:
     - basic-security.groovy
@@ -26,9 +26,3 @@
     state: restarted
   notify: "service jenkins restart"
 - meta: flush_handlers
-
-
-
-
-#- name: "Login from CLI"
-#  include: "cj-cli-login.yml"

@@ -1,6 +1,6 @@
 ---
 - block:
-#  - name: "Find and delete nodes not defined in list 'jenkins_nodes'"
+#  - name: "Find and delete nodes not defined in list 'cj_nodes'"
   - set_fact:
       the_groovy_script: "delete-old-nodes.groovy"
 
@@ -8,16 +8,16 @@
     template:
       src: "{{ the_groovy_script }}.j2"
       dest: "/tmp/{{ the_groovy_script }}"
-      owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-      group:  "{{ jenkins_runas_group | d('jenkins')}}"
+      owner:  "{{ cj_runas_user }}"
+      group:  "{{ cj_runas_group }}"
 
   - name: "Execute the script: /tmp/{{ the_groovy_script }}"
     shell: >
-      java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+      java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
     #ignore_errors: true
     register: result
 
-  - name: "Create nodes from list 'jenkins_nodes'"
+  - name: "Create nodes from list 'cj_nodes'"
     set_fact:
       the_groovy_script: "create-nodes.groovy"
 
@@ -25,15 +25,15 @@
     template:
       src: "{{ the_groovy_script }}.j2"
       dest: "/tmp/{{ the_groovy_script }}"
-      owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-      group:  "{{ jenkins_runas_group | d('jenkins')}}"
+      owner:  "{{ cj_runas_user }}"
+      group:  "{{ cj_runas_group }}"
 
   - name: "Execute the script: /tmp/{{ the_groovy_script }}"
     shell: >
-      java -jar {{ jenkins_cli_jar_location }} -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+      java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
     #ignore_errors: true
     register: result
 
   become: true
   become_user: jenkins
-#  become_user: "{{ jenkins_local_admin_users[0].username }}"
+#  become_user: "{{ cj_local_admin_users[0].username }}"

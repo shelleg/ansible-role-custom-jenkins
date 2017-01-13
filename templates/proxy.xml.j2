@@ -1,7 +1,7 @@
 <proxy>
-  <name>{{ jenkins_proxy_host }}</name>
-  <port>{{ jenkins_proxy_port }}</port>
-  <noProxyHost>{% for host in jenkins_no_proxy_hosts%}
+  <name>{{ cj_proxy_host }}</name>
+  <port>{{ cj_proxy_port }}</port>
+  <noProxyHost>{% for host in cj_no_proxy_hosts%}
 {{ host }}
 {% endfor %}
   </noProxyHost>

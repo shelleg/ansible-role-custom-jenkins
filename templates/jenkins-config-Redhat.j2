@@ -7,7 +7,7 @@
 # Directory where Jenkins store its configuration and working
 # files (checkouts, build reports, artifacts, ...).
 #
-JENKINS_HOME={{ jenkins_home }}
+JENKINS_HOME={{ cj_home }}
 
 ## Type:        string
 ## Default:     ""
@@ -26,7 +26,7 @@ JENKINS_JAVA_CMD=""
 # Be careful when you change this, as you need to update
 # permissions of $JENKINS_HOME and /var/log/jenkins.
 #
-JENKINS_USER="{{ jenkins_runas_user }}"
+JENKINS_USER="{{ cj_runas_user }}"
 
 ## Type:        string
 ## Default: "false"
@@ -44,7 +44,7 @@ JENKINS_USER="{{ jenkins_runas_user }}"
 #
 # Options to pass to java when running Jenkins.
 #
-JENKINS_JAVA_OPTIONS="{{ jenkins_jvm_args }}"
+JENKINS_JAVA_OPTIONS="{{ cj_jvm_args }}"
 
 ## Type:        integer(0:65535)
 ## Default:     8080
@@ -53,7 +53,7 @@ JENKINS_JAVA_OPTIONS="{{ jenkins_jvm_args }}"
 # Port Jenkins is listening on.
 # Set to -1 to disable
 #
-JENKINS_PORT="{{ jenkins_http_port }}"
+JENKINS_PORT="{{ cj_http_port }}"
 
 ## Type:        string
 ## Default:     ""
@@ -142,8 +142,8 @@ JENKINS_HANDLER_IDLE="20"
 # Full option list: java -jar jenkins.war --help
 #
 
-{% if not (jenkins_application_context is undefined or jenkins_application_context is none or jenkins_application_context | trim == '') %}
-JENKINS_ARGS="--prefix=/{{ jenkins_application_context }}"
+{% if not (cj_application_context is undefined or cj_application_context is none or cj_application_context | trim == '') %}
+JENKINS_ARGS="--prefix=/{{ cj_application_context }}"
 {% endif %}
-JENKINS_ARGS="${JENKINS_ARGS} {{ jenkins_cmd_args }}"
+JENKINS_ARGS="${JENKINS_ARGS} {{ cj_cmd_args }}"
 JENKINS_ARGS="${JENKINS_ARGS}"

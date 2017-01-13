@@ -2,70 +2,71 @@
 # defaults file for ansible-role-custom-jenkins
 
 # Listen port
-jenkins_http_port: 8080
+cj_http_port: 8080
 
 # could be latest || latest-LTS
-jenkins_version: latest-LTS
+cj_version: latest-LTS
 
 # some like to see /jenkins as a suffix I don't ... ;)
-jenkins_application_context: ''
+cj_application_context: ''
 
 # Directories used by Jenkins [ Apt || Rpm ]
-jenkins_home: /var/lib/jenkins
-jenkins_log_dir: /var/log/jenkins
-jenkins_cache_dir: /var/cache/jenkins
-jenkins_init_dir: "{{ jenkins_home }}/init.groovy.d"
-jenkins_update_dir: "{{ jenkins_home }}/updates"
-jenkins_webroot: /var/cache/jenkins/war
-jenkins_plugins_tmp_folder: /tmp/plugins
+cj_home: /var/lib/jenkins
+cj_log_dir: /var/log/jenkins
+cj_cache_dir: /var/cache/jenkins
+cj_init_dir: "{{ cj_home }}/init.groovy.d"
+cj_update_dir: "{{ cj_home }}/updates"
+cj_webroot: /var/cache/jenkins/war
+cj_plugins_tmp_folder: /tmp/plugins
 
 # use jenkins behind proxy
 # TODO: find a way to configure via groovy without authentication ... { already have template with auth }
-jenkins_set_proxy: false
-jenkins_proxy_host: "{{ proxy_server }}"
-jenkins_proxy_port: "{{ proxy_port |d('3148') }}"
-#jenkins_no_proxy_hosts: will be set in tasks
-jenkins_proxy_conf_file: "{{ jenkins_home }}/proxy.xml"
-# in case we want to test jenkins without a proxy when jenkins_set_proxy is set to true
-jenkins_remove_proxy: false
+cj_set_proxy: false
+cj_proxy_host: "{{ proxy_server }}"
+cj_proxy_port: "{{ proxy_port |d('3148') }}"
+#cj_no_proxy_hosts: will be set in tasks
+cj_proxy_conf_file: "{{ cj_home }}/proxy.xml"
+# in case we want to test jenkins without a proxy when cj_set_proxy is set to true
+cj_remove_proxy: false
 
 # jenkins 2 requires skip wizrd param
 # chenge this to true if you really want it ;)
-jenkins_run_startup_wizard: "false" # String becuase the jvm arg becomes False ...
+cj_run_startup_wizard: "false" # String becuase the jvm arg becomes False ...
 
-jenkins_jvm_args: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard={{ jenkins_run_startup_wizard }}"
-jenkins_cmd_args: "--webroot={{ jenkins_webroot }} --httpPort={{ jenkins_http_port }}"
+cj_jvm_args: "-Djava.awt.headless=true -Djenkins.install.runSetupWizard={{ cj_run_startup_wizard }}"
+cj_cmd_args: "--webroot={{ cj_webroot }} --httpPort={{ cj_http_port }}"
 
 # The system level user Jenkins should runas
-jenkins_runas: false
-#jenkins_custom_user: user
-#jenkins_custom_group: user
-jenkins_runas_user: "{{ jenkins_custom_user | d('jenkins') }}"
-jenkins_runas_group: "{{ jenkins_custom_group | d('jenkins') }}"
-jenkins_runas_sudoer: true
+#TODO we should revmove this all together ...
+cj_runas: false
+#cj_custom_user: user
+#cj_custom_group: user
+cj_runas_user: "{{ cj_custom_user | d('jenkins') }}"
+cj_runas_group: "{{ cj_custom_group | d('jenkins') }}"
+cj_runas_sudoer: true
 
 # Authorization strategy basic
-jenkins_allow_anon_read: true
-jenkins_basic_auth: true
-jenkins_local_admin_users:
+cj_allow_anon_read: true
+cj_basic_auth: true
+cj_local_admin_users:
   - { username: admin, password: admin }
   - { username: jjb, password: jjb }
 
-jenkins_local_regular_users:
+cj_local_regular_users:
   - { username: user1, password: user1 }
   - { username: user2, password: user2 }
 
 #jenkins-cli
-jenkins_cli_jar_location: "{{ jenkins_cache_dir }}/war/WEB-INF/jenkins-cli.jar"
-jenkins_cli_hostname: 'localhost'
+cj_cli_jar_location: "{{ cj_cache_dir }}/war/WEB-INF/jenkins-cli.jar"
+cj_cli_hostname: 'localhost'
 
 
 # jenkins material theme
 # could be: red, pink, purple, deep-purple see full list @ -> http://afonsof.com/jenkins-material-theme/
-jenkins_theme_color: amber
-jenkins_theme_conf_file: org.codefirst.SimpleThemeDecorator.xml
-jenkins_theme_css_url: https://jenkins-contrib-themes.github.io/jenkins-material-theme/dist/material-{{ jenkins_theme_color }}.css
-jenkins_theme_js_url: https://cdn.rawgit.com/djonsson/jenkins-atlassian-theme/gh-pages/theme.js
+cj_theme_color: amber
+cj_theme_conf_file: org.codefirst.SimpleThemeDecorator.xml
+cj_theme_css_url: https://jenkins-contrib-themes.github.io/jenkins-material-theme/dist/material-{{ cj_theme_color }}.css
+cj_theme_js_url: https://cdn.rawgit.com/djonsson/jenkins-atlassian-theme/gh-pages/theme.js
 
 # Get list + versions from existing Jenkins as a base configuration ...
 #
@@ -74,23 +75,24 @@ jenkins_theme_js_url: https://cdn.rawgit.com/djonsson/jenkins-atlassian-theme/gh
 #| awk -F " " ' {print " - { name: \""$1 "\","" version: \""  $2 "\", enabled: \"true\" }"} '
 
 # choose plugin sets to use
-jenkins_wizard: true
-jenkins_theme: true
-jenkins_setup_matrix_auth_strategy: true
-jenkins_setup_dsl_plugins: true
-jenkins_goodies: true
+cj_wizard: true
+cj_theme: true
+cj_setup_matrix_auth_strategy: true
+cj_setup_dsl_plugins: true
+cj_goodies: true
 
 # Categories:
-jenkins_base: false
+cj_base: false
 
-jenkins_github: false
-jenkins_blueocean: false
-jenkins_pipeline: false
-jenkins_workflow: false
+cj_github: false
+cj_blueocean: false
+cj_pipeline: false
+cj_workflow: false
 
-jenkins_seed_demo: true
+cj_seed_demo: true
 
-jenkins_wizard_plugins:
+cj_wizard_plugins:
+  - { name: "jenkins-multijob-plugin" }
   - { name: "bouncycastle-api", version: "2.16.0", enabled: "true", extention: "hpi" }
   - { name: "cloudbees-folder", version: "5.15", enabled: "true", extention: "hpi" }
   - { name: "structs", version: "1.5", enabled: "true", extention: "hpi" }
@@ -154,37 +156,36 @@ jenkins_wizard_plugins:
   - { name: "ssh-slaves", version: "1.12", enabled: "true", extention: "hpi" }
   - { name: "email-ext", version: "2.53", enabled: "true", extention: "hpi"}
 
-jenkins_dsl_plugins:
+cj_dsl_plugins:
   - { name: "job-dsl", version: "1.54", enabled: "true", extention: "hpi"}
   - { name: "job-node-stalker" }
   - { name: "jquery" }
   - { name: "workflow-cps-global-lib", version: "2.5", enabled: "true", extention: "hpi" }
   - { name: "build-pipeline-plugin" }
 
-jenkins_setup_matrix_auth_strategy_plugins:
+cj_setup_matrix_auth_strategy_plugins:
   - { name: "icon-shim", version: "2.0.3", enabled: "true", extention: "hpi" }
   - { name: "matrix-auth", version: "1.4", enabled: "true", extention: "hpi" }
 
-jenkins_theme_plugins:
+cj_theme_plugins:
   - { name: "simple-theme-plugin", version: "0.3", enabled: "true", extention: "hpi" }
 
-jenkins_goodie_plugins:
+cj_goodie_plugins:
   - { name: "greenballs" }
 
-jenkins_node_templates:
+cj_node_templates:
   - { name: "linux-node-template", labels: "linux", home: "/home/jenkins", executors: "5" }
   - { name: "windows-node-template", labels: "windows" }
   - { name: "solaris-node-template", labels: "solaris" }
   - { name: "aux-node-template", labels: "aux" }
 
-jenkins_nodes_credentials:
+cj_nodes_credentials:
   - { name: "solaris-user", id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", username: "nodeuser", password: "test", description: "use this for solaris slaves" }
   - { name: "linux-user", id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", username: "jenkins_user", password: "toor", description: "use this for solaris slaves" }
   - { name: "aux-user", id: "4b2a3485-bf8b-429d-8b21-c19d6b60f198", username: "aux_jenkins_user", password: "tralala", description: "use this for AUX slaves" }
 
-jenkins_nodes:
+cj_nodes:
   - { name: "linux01", host: "linux1.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
   - { name: "linux02", host: "linux2.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
   - { name: "linux03", host: "linux3.domain.com", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
   - { name: "solaris01", host: "solaris1.domain.com", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
-

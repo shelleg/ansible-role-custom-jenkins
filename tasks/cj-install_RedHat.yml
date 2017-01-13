@@ -14,11 +14,11 @@
 - name: "Add jenkins rpm key"
   rpm_key:
     state: present
-    key: "{{ jenkins_repo_key_url }}"
+    key: "{{ cj_repo_key_url }}"
 
 - name: "Add Jenkins rpm repo"
   get_url:
-    url: "{{ jenkins_repo_url }}"
+    url: "{{ cj_repo_url }}"
     dest: /etc/yum.repos.d/jenkins.repo
 
 - name: "Enable yum caching considering jenkins rpm size"
@@ -27,7 +27,7 @@
     state: present
     regexp: '^keepcache=0'
     line: 'keepcache=1'
-  when: jenkins_set_proxy is not defined
+  when: cj_set_proxy is not defined
 
 - name: "Jenkins Install"
   package:

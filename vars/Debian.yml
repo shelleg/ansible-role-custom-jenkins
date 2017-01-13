@@ -1,6 +1,6 @@
 ---
-jenkins_repo_url_gratest_n_latest: "deb https://pkg.jenkins.io/debian binary/"
-jenkins_repo_url_latest_lts: "deb https://pkg.jenkins.io/debian-stable binary/"
-jenkins_repo_key_url: http://pkg.jenkins.io/debian/jenkins.io.key
-jenkins_pkg_url: http://pkg.jenkins.io/debian/binary/
-jenkins_conf_file: /etc/default/jenkins
+cj_repo_url_gratest_n_latest: "deb https://pkg.jenkins.io/debian binary/"
+cj_repo_url_latest_lts: "deb https://pkg.jenkins.io/debian-stable binary/"
+cj_repo_key_url: http://pkg.jenkins.io/debian/jenkins.io.key
+cj_pkg_url: http://pkg.jenkins.io/debian/binary/
+cj_conf_file: /etc/default/jenkins

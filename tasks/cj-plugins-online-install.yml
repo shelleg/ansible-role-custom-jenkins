@@ -1,26 +1,25 @@
 ---
 
-- include: "cj-jenkins_update_site.yml"
+- include: "cj-update_site.yml"
 - include: "cj-plugin-sets.yml"
 - include: "cj-auth_check.yml"
 
 - name: "get installed plugin list"
   shell: >
-    java -jar {{ jenkins_cli_jar_location }} \
-    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
     list-plugins | awk '{print $1}'
   register: plugins_installed
   changed_when: false
 
 - name: "Install Jenkins plugins | method implemented for online installations"
   command: >
-    java -jar {{ jenkins_cli_jar_location }} \
-    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
     install-plugin {{ item.name }}
-#    creates: "{{ jenkins_home }}/plugins/{{ item.name }}.jpi"
   register: ips
   with_items:
-    - "{{ jenkins_plugins }}"
+    - "{{ cj_plugins }}"
   when: plugins_installed and plugins_installed.stdout.find('{{ item.name }}') == -1
   until: ips.rc == 0
   retries: 10
@@ -28,7 +27,6 @@
   notify: "restart jenkins"
 
 - debug: var=ips
-
 
 - service:
     name: jenkins
@@ -40,12 +38,11 @@
   template:
     src: "{{ item }}.j2"
     dest: "/tmp/{{ item }}"
-    owner:  "{{ jenkins_runas_user | d('jenkins')}}"
-    group:  "{{ jenkins_runas_group | d('jenkins')}}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
     mode: 0755
   with_items:
     - update-user-xml.python
-
 
 - name: "Execute the script: /tmp/update-user-xml.python"
   shell: >
@@ -53,54 +50,3 @@
   ignore_errors: true
   notify: "service jenkins restart"
   register: result
-
-
-#- set_fact:
-#    jenkins_plugin_install_params:
-#      url_username: "{{ jenkins_local_admin_users[0].username }}"
-#      url_password: "{{ jenkins_local_admin_users[0].password }}"
-#
-#- debug: var=jenkins_plugins
-#
-#- name: "Install Jenkins plugins(s) | method implemented for online installations [no-auth]"
-#  jenkins_plugin:
-#    name: "{{ item.name }}"
-##    state: "{{ item.value['version'] }}"
-#  with_list: "{{ jenkins_plugins }}"
-#  register: ips
-##  until: ips.results.rc == 0
-#  retries: 10
-#  delay: 8
-#  when: not jenkins_auth_enabled
-#
-#
-#- name: "Install Jenkins plugins(s) | method implemented for online installations [with-auth]"
-#  jenkins_plugin:
-#    name: "{{ item.name }}"
-#    params: "{{ jenkins_plugin_install_params }}"
-##    state: "{{ item.value['version'] }}"
-#  with_list: "{{ jenkins_plugins }}"
-#  register: ips
-##  until: ips.results.rc == 0
-#  retries: 10
-#  delay: 8
-#  when: jenkins_auth_enabled
-#
-#
-#- debug: var=ips
-#
-#- name: "jenkins_restart_required defaults to no"
-#  set_fact:
-#    jenkins_restart_required: no
-#
-#- name: "jenkins_restart_required is set to yes if any plugin was installed"
-#  set_fact:
-#    jenkins_restart_required: yes
-#  when: item.changed
-#  with_items: "{{ ips.results }}"
-#
-#- name: "restart Jenkins if required ..."
-#  service:
-#    name: jenkins
-#    state: restarted
-#  when: jenkins_restart_required

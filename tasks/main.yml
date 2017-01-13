@@ -1,122 +1,114 @@
 ---
 # tasks file for ansible-role-custom-jenkins
+- block:
+  - name: "01 :: Include Debain / Redhat OS vars"
+    include_vars: "{{ ansible_os_family }}.yml"
+    tags:
+      - plugins
 
-- name: "01 :: Include Debain / Redhat OS vars"
-  include_vars: "{{ ansible_os_family }}.yml"
-  tags:
-    - plugins
+  - name: "-01 :: Incase you want to cleanup the and start over ..."
+    include: "cj-cleanup.yml"
+    when: ((cleanup is defined) and (cleanup | bool))
+    static: no
 
-- name: "-01 :: Incase you want to cleanup the and start over ..."
-  include: "cj-cleanup.yml"
-  when: ((cleanup is defined) and (cleanup | bool))
-  static: no
+  - name: "02.1 :: Define cj_repo_url fact to {{ cj_repo_url_latest_lts }}"
+    set_fact:
+      cj_repo_url: "{{ cj_repo_url_latest_lts }}"
+    when: cj_version == 'latest-LTS'
 
-- name: "02.1 :: Define jenkins_repo_url fact to {{ jenkins_repo_url_latest_lts }}"
-  set_fact:
-    jenkins_repo_url: "{{ jenkins_repo_url_latest_lts }}"
-  when: jenkins_version == 'latest-LTS'
+  - name: "02.2 :: Define cj_repo_url fact to {{ cj_repo_url_gratest_n_latest }}"
+    set_fact:
+      cj_repo_url: "{{ cj_repo_url_gratest_n_latest }}"
+    when: cj_version == 'latest'
 
-- name: "02.2 :: Define jenkins_repo_url fact to {{ jenkins_repo_url_gratest_n_latest }}"
-  set_fact:
-    jenkins_repo_url: "{{ jenkins_repo_url_gratest_n_latest }}"
-  when: jenkins_version == 'latest'
+  - name: "03 :: Include Debain / Redhat OS installaion method"
+    include: "cj-install_{{ ansible_os_family }}.yml"
 
-- name: "03 :: Include Debain / Redhat OS installaion method"
-  include: "cj-install_{{ ansible_os_family }}.yml"
+  - name: "05 :: Configure Jenkins via {{ cj_conf_file }}"
+    template:
+      src: "jenkins-config-{{ ansible_os_family }}.j2"
+      dest: "{{ cj_conf_file }}"
+      mode: 0755
+    register: config_changed
+    tags:
+      - plugins
+  - name: "06 :: Configure Jenkins Proxy - if needed"
+    include: "cj-proxy.yml"
+    when: (cj_set_proxy is defined) and (cj_set_proxy | bool)
 
-#- name: "Setup Jenkins User"
-#  include: "cj-run_as.yml"
-#  when: (jenkins_runas is defined) and (jenkins_runas | bool)
-#  static: no
+  - name: "-06 :: Remove proxy config - if requested"
+    file:
+      dest: "{{ cj_home }}/proxy.xml"
+      state: absent
+    when: (cj_remove_proxy is defined) and (cj_remove_proxy | bool)
 
-- name: "04 :: Validate {{ jenkins_runas_user d('jenkins')}} has a valid ssh key"
-  include: "cj-ssh_key.yml"
+  - name: "08 :: Service start & enable"
+    service:
+      name: jenkins
+      state: started
+      enabled: yes
+    tags:
+      - plugins
 
-- name: "05 :: Configure Jenkins via {{ jenkins_conf_file }}"
-  template:
-    src: "jenkins-config-{{ ansible_os_family }}.j2"
-    dest: "{{ jenkins_conf_file }}"
-    mode: 0755
-  register: config_changed
-  tags:
-    - plugins
-
-- name: "06 :: Configure Jenkins Proxy - if needed"
-  include: "cj-proxy.yml"
-  when: (jenkins_set_proxy is defined) and (jenkins_set_proxy | bool)
-
-- name: "-06 :: Remove proxy config - if requested"
-  file:
-    dest: "{{ jenkins_home }}/proxy.xml"
-    state: absent
-  when: (jenkins_remove_proxy is defined) and (jenkins_remove_proxy | bool)
-
-- name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
-  include: "cj-init_config.yml"
-  tags:
-    - auth
-
-### start
-# Make sure Jenkins starts, then configure Jenkins.
-###
-- name: "08 :: Service start & enable"
-  service:
-    name: jenkins
-    state: started
-    enabled: yes
-#  when: config_changed.changed
-  tags:
-    - plugins
-
-- name: "09 :: Check auth status"
-  include: "cj-auth_check.yml"
-
-- name: "09.1 :: Cli Login"
-  include: "cj-cli-login.yml"
-
-- name: "10 :: install recommanded plugins"
-  include: "cj-plugins-online-install.yml"
-#  when: ((internet_available is defined) and (internet_available | bool))
-  tags:
-    - plugins
-
-- name: "Add credentials"
-  include: "cj-add-all-credentials.yml"
-
-- name: "Add nodes"
-  include: "cj-add-nodes.yml"
-  tags:
-    - mytest
-### configure look & feel
-
-- name: "11 :: Enable jenkins material theme - if requested config & restart"
-  include: "cj-theme.yml"
-  when: ((jenkins_theme is defined) and (jenkins_theme | bool))
-  static: no
+  become: true
+  become_user: root
 
 - block:
 
-  - name: "12.1 :: Check auth status"
+  - name: "04 :: Validate {{ cj_runas_user d('jenkins')}} has a valid ssh key"
+    include: "cj-ssh_key.yml"
+
+  - name: "10 :: install recommanded plugins"
+    include: "cj-plugins-online-install.yml"
+    tags:
+      - plugins
+
+  - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
+    include: "cj-init_config.yml"
+    tags:
+      - auth
+
+  - name: "09 :: Check auth status"
     include: "cj-auth_check.yml"
 
-  - name: "12.2 :: Cli Login"
+  - name: "09.1 :: Cli Login"
     include: "cj-cli-login.yml"
 
-  - name: "12.3 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
-    include: "cj-seed.yml"
+  - name: "Add credentials"
+    include: "cj-add-all-credentials.yml"
 
-  when: ((jenkins_seed_demo is defined) and (jenkins_seed_demo | bool))
+  - name: "Wait for Jenkins"
+    pause: seconds=30
 
-#  when: email is defined and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
+  - name: "Add nodes"
+    include: "cj-add-nodes.yml"
+    tags:
+      - mytest
 
-###  setup e-mail ?
-#  when: jenkins_email is defined
-###
+  ### configure look & feel
+  - name: "11 :: Enable jenkins material theme - if requested config & restart"
+    include: "cj-theme.yml"
+    when: ((cj_theme is defined) and (cj_theme | bool))
+    static: no
 
-# logout of jenkins cli
-- name: "13 :: Jenkins logout when auth is enabled - we do not want to remain authenticated after play completes ..."
-  shell: >
-    java -jar {{ jenkins_cli_jar_location }} \
-    -s http://{{ jenkins_cli_hostname }}:{{ jenkins_http_port }}{{ jenkins_application_context | default('') }}/ \
-    -noKeyAuth logout
-  when: (jenkins_auth_enabled is defined) and (jenkins_auth_enabled | bool)
+  - block:
+
+    - name: "12.1 :: Check auth status"
+      include: "cj-auth_check.yml"
+
+    - name: "12.2 :: Cli Login"
+      include: "cj-cli-login.yml"
+
+    - name: "12.3 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
+      include: "cj-seed.yml"
+
+    when: ((cj_seed_demo is defined) and (cj_seed_demo | bool))
+
+  #  when: email is defined and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
+
+  ###  setup e-mail ?
+  #  when: cj_email is defined
+  ###
+
+  become: true
+  become_user: "{{ cj_runas_user }}"

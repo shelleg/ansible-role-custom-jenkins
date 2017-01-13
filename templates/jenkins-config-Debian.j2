@@ -7,21 +7,21 @@ NAME=jenkins
 JAVA=/usr/bin/java
 
 # arguments to pass to java
-JAVA_ARGS="{{ jenkins_jvm_args }}"  # Allow graphs etc. to work even when an X server is present
+JAVA_ARGS="{{ cj_jvm_args }}"  # Allow graphs etc. to work even when an X server is present
 #JAVA_ARGS="-Xmx256m"
 #JAVA_ARGS="-Djava.net.preferIPv4Stack=true" # make jenkins listen on IPv4 address
 
 PIDFILE=/var/run/$NAME/$NAME.pid
 
 # user and group to be invoked as (default to jenkins)
-JENKINS_USER={{ jenkins_runas_user }}
-JENKINS_GROUP={{ jenkins_runas_group }}
+JENKINS_USER={{ cj_runas_user }}
+JENKINS_GROUP={{ cj_runas_group }}
 
 # location of the jenkins war file
 JENKINS_WAR=/usr/share/$NAME/$NAME.war
 
 # jenkins home location
-JENKINS_HOME={{ jenkins_home }}
+JENKINS_HOME={{ cj_home }}
 
 # set this to false if you don't want Hudson to run by itself
 # in this set up, you are expected to provide a servlet container
@@ -54,7 +54,7 @@ MAXOPENFILES=8192
 # UMASK=027
 
 # port for HTTP connector (default 8080; disable with -1)
-HTTP_PORT={{ jenkins_http_port }}
+HTTP_PORT={{ cj_http_port }}
 
 
 # servlet context, important if you want to use apache proxying
@@ -69,8 +69,8 @@ PREFIX=/$NAME
 # --webroot=~/.jenkins/war
 # --prefix=$PREFIX
 
-{% if not (jenkins_application_context is undefined or jenkins_application_context is none or jenkins_application_context | trim == '') %}
-JENKINS_ARGS="--prefix=/{{ jenkins_application_context }}"
+{% if not (cj_application_context is undefined or cj_application_context is none or cj_application_context | trim == '') %}
+JENKINS_ARGS="--prefix=/{{ cj_application_context }}"
 {% endif %}
-JENKINS_ARGS="${JENKINS_ARGS} {{ jenkins_cmd_args }}"
+JENKINS_ARGS="${JENKINS_ARGS} {{ cj_cmd_args }}"
 JENKINS_ARGS="${JENKINS_ARGS}"

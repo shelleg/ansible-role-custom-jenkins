@@ -1,33 +1,33 @@
 ---
 - name: "Cache the themes css and js in Jenkins userContent"
   get_url:
-    url: "{{ jenkins_theme_css_url }}"
-    dest: "{{ jenkins_home }}/userContent/material-{{ jenkins_theme_color }}.css"
-    owner: "{{ jenkins_runas_user  | d('jenkins')}}"
-    group: "{{ jenkins_runas_group | d('jenkins')}}"
+    url: "{{ cj_theme_css_url }}"
+    dest: "{{ cj_home }}/userContent/material-{{ cj_theme_color }}.css"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
     mode: 0755
     validate_certs: false
   register: theme_css
 
 - name: "Cache the themes css and js in Jenkins userContent"
   get_url:
-    url: "{{ jenkins_theme_js_url }}"
-    dest: "{{ jenkins_home }}/userContent/theme.js"
-    owner: "{{ jenkins_runas_user  | d('jenkins')}}"
-    group: "{{ jenkins_runas_group | d('jenkins')}}"
+    url: "{{ cj_theme_js_url }}"
+    dest: "{{ cj_home }}/userContent/theme.js"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
     mode: 0755
     validate_certs: false
   register: theme_js
 
 - name: "update Jenkins theme setting"
   template:
-    src: "{{ jenkins_theme_conf_file }}.j2"
-    dest: "{{ jenkins_home }}/{{ jenkins_theme_conf_file }}"
-    owner: "{{ jenkins_runas_user | d('jenkins')}}"
-    group: "{{ jenkins_runas_group | d('jenkins')}}"
+    src: "{{ cj_theme_conf_file }}.j2"
+    dest: "{{ cj_home }}/{{ cj_theme_conf_file }}"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
     mode: 0755
   with_items:
-    - "{{ jenkins_plugins }}"
+    - "{{ cj_plugins }}"
   register: theme_config
   when: (( item.name == "simple-theme-plugin" ) and ( item.enabled == "true" ))
 

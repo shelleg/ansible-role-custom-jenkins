@@ -9,7 +9,7 @@ def newNodes = [];
 
 Jenkins jenkins = Jenkins.instance
 
-{% for new_node in jenkins_nodes %}
+{% for new_node in cj_nodes %}
 
 {{ new_node.name }}: {
     def need_update=0

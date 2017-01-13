@@ -5,7 +5,7 @@ def logger = Logger.getLogger("")
 def installed = false
 def initialized = false
 
-def pluginParameter="{{ jenkins_recommended_plugins | join(' ') }}"
+def pluginParameter="{{ cj_recommended_plugins | join(' ') }}"
 def plugins = pluginParameter.split()
 logger.info("" + plugins)
 def instance = Jenkins.getInstance()

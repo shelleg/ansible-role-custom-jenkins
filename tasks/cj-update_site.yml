@@ -1,0 +1,37 @@
+---
+- name: "Create Jenkins updates folder + plugins temporary download folder"
+  file:
+    path: "{{ item }}"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
+    state: directory
+    mode: 0755
+  with_items:
+    - "{{ cj_home }}/updates"
+    - "{{ cj_plugins_tmp_folder }}"
+
+- name: "Update Jenkins plugin update-center json"
+  get_url:
+    url: "{{ cj_update_center_url | d('https://updates.jenkins-ci.org') }}/update-center.json"
+    dest: "/tmp/default.json"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
+    mode: 0755
+    validate_certs: false
+  register: update_site
+
+- name: "remove blank lines in default.json"
+  lineinfile:
+    dest: "/tmp/default.json"
+    regexp: '^(?:[\t ]*(?:\r?\n|\r))+'
+    state: absent
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
+    mode: 0755
+  when: update_site.changed
+
+- include: "cj-auth_check.yml"
+
+- name: "POST the default.json to Jenkins update url"
+  shell: >
+    cat /tmp/default.json | curl -X POST -H 'Accept: application/json' -d @- http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/updateCenter/byId/default/postBack --verbose

@@ -4,7 +4,7 @@ from xml.etree.ElementTree import parse, Element, SubElement
 from os.path import expanduser
 home = expanduser("~")
 #from xml import etree
-user_file = "{{ jenkins_home }}/users/{{ jenkins_local_admin_users[0].username }}/config.xml"
+user_file = "{{ cj_home }}/users/{{ cj_local_admin_users[0].username }}/config.xml"
 doc = parse(user_file)
 root = doc.getroot()
 home = expanduser('~jenkins')
