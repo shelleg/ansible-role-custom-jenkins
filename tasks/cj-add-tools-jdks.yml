@@ -1,12 +1,8 @@
 ---
-- name: "Create credential..."
-  debug:
-    var: credential
-
 - set_fact:
-    the_groovy_script: "add-credential.groovy"
+    the_groovy_script: "create-tools-jdk.groovy"
 
-- name: "Generate groovy script to add a credential"
+- name: "Generate groovy script {{ the_groovy_script }}"
   template:
     src: "{{ the_groovy_script }}.j2"
     dest: "/tmp/{{ the_groovy_script }}"
@@ -20,7 +16,4 @@
   become_user: "{{ cj_runas_user }}"
   register: result
 
-- name: "Print result"
-  debug:
-    var: result.stdout_lines
-
+- debug: var=result

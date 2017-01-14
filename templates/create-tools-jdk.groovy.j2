@@ -1,0 +1,27 @@
+import hudson.model.JDK
+import hudson.tools.JDKInstaller
+import hudson.tools.InstallSourceProperty
+import jenkins.model.Jenkins
+
+def descriptor = new JDK.DescriptorImpl();
+
+String oracle_user='{{ cj_oracle_account_username }}'
+String oracle_password='{{ cj_oracle_account_password }}'
+
+def jdks = [];
+
+def jdkInstaller1
+def jdk1
+
+{% for new_jdk in cj_tools_jdks %}
+
+jdkInstaller1 = new JDKInstaller('{{ new_jdk.version }}-oth-JPR', true)
+jdkInstaller1.getDescriptor().doPostCredential(oracle_user,oracle_password)
+jdk1 = new JDK("{{ new_jdk.name }}", null, [new InstallSourceProperty([jdkInstaller1])])
+jdks.push(jdk1)
+
+{% endfor %}
+
+descriptor.setInstallations(jdks.toArray(new JDK[0]))
+descriptor.save()
+Jenkins.instance.save()

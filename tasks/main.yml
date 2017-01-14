@@ -1,6 +1,7 @@
 ---
 # tasks file for ansible-role-custom-jenkins
 - block:
+
   - name: "01 :: Include Debain / Redhat OS vars"
     include_vars: "{{ ansible_os_family }}.yml"
     tags:
@@ -32,6 +33,7 @@
     register: config_changed
     tags:
       - plugins
+
   - name: "06 :: Configure Jenkins Proxy - if needed"
     include: "cj-proxy.yml"
     when: (cj_set_proxy is defined) and (cj_set_proxy | bool)
@@ -43,12 +45,7 @@
     when: (cj_remove_proxy is defined) and (cj_remove_proxy | bool)
 
   - name: "08 :: Service start & enable"
-    service:
-      name: jenkins
-      state: started
-      enabled: yes
-    tags:
-      - plugins
+    include: "cj-restart-jenkins.yml"
 
   become: true
   become_user: root
@@ -77,13 +74,17 @@
   - name: "Add credentials"
     include: "cj-add-all-credentials.yml"
 
-  - name: "Wait for Jenkins"
-    pause: seconds=30
-
-  - name: "Add nodes"
+  - name: "Create Jenkins nodes"
     include: "cj-add-nodes.yml"
     tags:
       - mytest
+    when: ((cj_nodes_create is defined) and (cj_nodes_create | bool))
+
+  - name: "Add JDK-s to tools"
+    include: "cj-add-tools-jdks.yml"
+    tags:
+      - mytest
+      - always
 
   ### configure look & feel
   - name: "11 :: Enable jenkins material theme - if requested config & restart"
@@ -104,11 +105,6 @@
 
     when: ((cj_seed_demo is defined) and (cj_seed_demo | bool))
 
-  #  when: email is defined and (ansible_os_family == "Debian" or ansible_os_family == "RedHat")
-
-  ###  setup e-mail ?
-  #  when: cj_email is defined
-  ###
-
   become: true
   become_user: "{{ cj_runas_user }}"
+

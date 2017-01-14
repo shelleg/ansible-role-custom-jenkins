@@ -19,6 +19,11 @@ Jenkins jenkins = Jenkins.instance
          continue;
       }
     }
+    {% if new_node.launcher_type == 'ssh' %}
+    ComputerLauncher launcher = new SSHLauncher("{{ new_node.host }}", {{ new_node.ssh_port }} , "{{ new_node.credential_id }}", "","","","",  0,0,0)
+    {% else %}
+    ComputerLauncher launcher = new JNLPLauncher()
+    {% endif %}
     Slave slave = new DumbSlave(
                     "{{ new_node.name }}",
                     "{{ new_node.description }}",
@@ -26,7 +31,9 @@ Jenkins jenkins = Jenkins.instance
                     "{{ new_node.executors }}",
                     Node.Mode.NORMAL,
                     "{{ new_node.labels }}",
-                    new SSHLauncher("{{ new_node.host }}", {{ new_node.ssh_port }} , "{{ new_node.credential_id }}", "","","","",  0,0,0),
+                    launcher,
+                    //new SSHLauncher("{{ new_node.host }}", {{ new_node.ssh_port }} , "{{ new_node.credential_id }}", "","","","",  0,0,0),
+                    //new JNLPLauncher(),
                     new RetentionStrategy.Always(),
                     new LinkedList())
     if (need_update==1) {
