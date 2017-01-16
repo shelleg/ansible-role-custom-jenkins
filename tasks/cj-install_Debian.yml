@@ -18,6 +18,13 @@
     - curl
     - unzip
 
+- name: "Install seed module deps"
+  pip:
+    name: "{{ item }}"
+  with_items:
+  - lxml
+  - python-jenkins
+
 - name: "Add Jenkins apt Key"
   apt_key:
     url: "{{ cj_repo_key_url }}"

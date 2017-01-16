@@ -15,8 +15,7 @@
     - update-user-xml.python
 
 - name: "Execute the script: /tmp/update-user-xml.python"
-  shell: >
-    /tmp/update-user-xml.python
+  shell: python /tmp/update-user-xml.python
   ignore_errors: true
   register: result
 
