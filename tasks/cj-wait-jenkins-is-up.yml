@@ -1,0 +1,9 @@
+---
+- name: "wait for jenkins http listen port"
+  uri:
+    url: "http://localhost:{{ cj_http_port }}{{ cj_context | default('') }}/login"
+    status_code: 200
+  register: jenkins_login_page
+  until: jenkins_login_page.status == 200
+  retries: 60
+  delay: 3

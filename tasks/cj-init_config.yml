@@ -21,8 +21,10 @@
   with_items:
     - basic-security.groovy
 
-- service:
-    name: jenkins
-    state: restarted
-  notify: "service jenkins restart"
-- meta: flush_handlers
+#- service:
+#    name: jenkins
+#    state: restarted
+#  notify: "service jenkins restart"
+#- meta: flush_handlers
+
+- include: "cj-restart-jenkins.yml"

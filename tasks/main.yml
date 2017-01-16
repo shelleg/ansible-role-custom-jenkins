@@ -65,6 +65,9 @@
     tags:
       - auth
 
+  - name: "08 :: Add ssh public key of {{ cj_runas_user }} user to user {{ cj_local_admin_users[0].username }} properties in Jenkins"
+    include: "cj-add-public-key-to-admin-user.yml"
+
   - name: "09 :: Check auth status"
     include: "cj-auth_check.yml"
 

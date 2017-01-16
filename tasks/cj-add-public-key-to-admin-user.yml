@@ -1,0 +1,26 @@
+---
+- name: "stop jenkins"
+  service:
+    name: jenkins
+    state: stopped
+
+- name: "Python script for add public-key of user jenkins to the first 'admin' user"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/tmp/{{ item }}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
+    mode: 0755
+  with_items:
+    - update-user-xml.python
+
+- name: "Execute the script: /tmp/update-user-xml.python"
+  shell: >
+    /tmp/update-user-xml.python
+  ignore_errors: true
+  register: result
+
+- include: "cj-restart-jenkins.yml"
+
+- name: "Output of the last command"
+  debug: var=result
