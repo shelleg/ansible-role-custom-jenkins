@@ -1,0 +1,67 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<flow-definition plugin="workflow-job@2.9">
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties>
+    <org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+      <triggers/>
+    </org.jenkinsci.plugins.workflow.job.properties.PipelineTriggersJobProperty>
+  </properties>
+  <definition class="org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition" plugin="workflow-cps@2.24">
+    <script>stage(&apos;init&apos;) {
+    node (&quot;localroot&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh init&apos;
+    }
+}
+stage(&apos;reqs&apos;) {
+    node (&quot;localroot&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh reqs&apos;
+    }
+}
+stage(&apos;image&apos;) {
+    node (&quot;localroot&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh image&apos;
+    }
+}
+
+stage(&apos;vagrant&apos;) {
+    node (&quot;localroot&quot;){
+        sh &apos;cd /root/.ssh; cat id_rsa.pub &gt; authorized_keys&apos;
+        sh &apos;cd /home/user/.ssh; cat id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys&apos;
+        sh &apos;rm -f /root/.ssh/known_hosts&apos;
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh vagrant&apos;
+        sh &apos;ssh-keyscan -H 10.0.10.1 &gt;&gt; ~/.ssh/known_hosts&apos;
+    }
+}
+stage(&apos;java&apos;) {
+    node (&quot;localroot&quot;){
+        sh &apos;sleep 50&apos;
+        sh &apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;
+    }
+}
+stage(&apos;server&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh server&apos;
+    }
+}
+stage(&apos;pubkey&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh pubkey&apos;
+    }
+}
+stage(&apos;net&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh net&apos;
+    }
+}
+stage(&apos;base&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh base&apos;
+    }
+}
+</script>
+    <sandbox>false</sandbox>
+  </definition>
+  <triggers/>
+</flow-definition>

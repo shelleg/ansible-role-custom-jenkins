@@ -9,6 +9,7 @@
     state: absent
   with_items:
     - seed
+    - pipe
 
 - name: "Create seed job(s)"
   jenkins_job:
@@ -18,6 +19,7 @@
     password: "{{ cj_local_admin_users[0].password }}"
   with_items:
     - seed
+    - pipe
 
 - include: "cj-restart-jenkins.yml"
 - meta: flush_handlers
@@ -29,3 +31,4 @@
     build -s {{ item }}
   with_items:
     - seed
+    - pipe
