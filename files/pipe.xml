@@ -36,7 +36,7 @@ stage(&apos;vagrant&apos;) {
 }
 stage(&apos;java&apos;) {
     node (&quot;localroot&quot;){
-        sh &apos;sleep 50&apos;
+        sh &apos;sleep 90&apos;
         sh &apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;
     }
 }

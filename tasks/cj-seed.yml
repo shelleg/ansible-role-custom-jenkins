@@ -31,4 +31,4 @@
     build -s {{ item }}
   with_items:
     - seed
-    - pipe
+
