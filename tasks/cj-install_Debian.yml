@@ -11,12 +11,7 @@
     name: "{{ item }}"
     state: installed
   with_items:
-    - python-httplib2
-    - python-pip
-    - acl
-    - vim
-    - curl
-    - unzip
+    - "{{ cj_jenkins_deps }}"
 
 - name: "Add Jenkins apt Key"
   apt_key:
@@ -31,9 +26,38 @@
     update_cache: yes
   become: true
 
-- name: "Jenkins Install"
+- name: "Download specific Jenkins version"
+  get_url:
+    url: "{{ cj_repo_base_url_fixed_ver }}/jenkins_{{ cj_version }}_all.deb"
+    dest: "/tmp/jenkins_{{ cj_version }}_all.deb"
+  register: cj_fixed_version
+  when: cj_version is defined
+
+- name: "Check the version of Jenkins"
+  stat:
+    path: "/tmp/jenkins_{{ cj_version }}_all.deb"
+  register: cj_stat_version
+  when: cj_version is defined
+
+- name: "Install our specific version of Jenkins"
   apt:
+    deb: "{{ cj_stat_version.stat.path }}"
+    state: installed
+  when: cj_version is defined and cj_stat_version.stat.exists
+
+- name: "Jenkins [ fixed version ] package installed !?"
+  apt:
+    deb: "{{ cj_stat_version.stat.path }}"
+    state: present
+  register: cj_pkg_installed
+  when: cj_version is defined and cj_stat_version.stat.exists
+
+- name: "Jenkins [ latest version ] package installed !?"
+  package:
     name: jenkins
     state: latest
+  when: cj_version is undefined
 
+- name: "Install pip requierments"
+  include: "cj-pip-reqs.yml"
 

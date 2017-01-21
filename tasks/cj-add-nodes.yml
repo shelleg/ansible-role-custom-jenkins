@@ -12,7 +12,9 @@
 
 - name: "Execute the script: /tmp/{{ the_groovy_script }}"
   shell: >
-    java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
+    groovy /tmp/{{ the_groovy_script }}
   register: result
 
 - name: "Create nodes from list 'cj_nodes'"
@@ -28,5 +30,7 @@
 
 - name: "Execute the script: /tmp/{{ the_groovy_script }}"
   shell: >
-    java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
+    groovy /tmp/{{ the_groovy_script }}
   register: result
