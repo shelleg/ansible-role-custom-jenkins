@@ -1,5 +1,4 @@
 ---
-#  - name: "Find and delete nodes not defined in list 'cj_nodes'"
 - set_fact:
     the_groovy_script: "delete-old-nodes.groovy"
 
@@ -12,8 +11,12 @@
 
 - name: "Execute the script: /tmp/{{ the_groovy_script }}"
   shell: >
-    java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
+    groovy /tmp/{{ the_groovy_script }}
   register: result
+  become: true
+  become_user: "{{ cj_runas_user }}"
 
 - name: "Create nodes from list 'cj_nodes'"
   set_fact:
@@ -28,5 +31,9 @@
 
 - name: "Execute the script: /tmp/{{ the_groovy_script }}"
   shell: >
-    java -jar {{ cj_cli_jar_location }} -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ groovy /tmp/{{ the_groovy_script }}
+    java -jar {{ cj_cli_jar_location }} \
+    -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
+    groovy /tmp/{{ the_groovy_script }}
   register: result
+  become: true
+  become_user: "{{ cj_runas_user }}"

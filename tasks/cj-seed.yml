@@ -1,6 +1,4 @@
 ---
-- include: "cj-cli-login.yml"
-
 - name: "Delete seed job(s)"
   jenkins_job:
     name: "{{ item }}"

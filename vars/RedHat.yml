@@ -1,6 +1,18 @@
 ---
+# https://pkg.jenkins.io/redhat-stable/jenkins-2.32.1-1.1.noarch.rpm
+# https://pkg.jenkins.io/redhat/jenkins-2.32-1.1.noarch.rpm
 cj_repo_url_gratest_n_latest: http://pkg.jenkins-ci.org/redhat/jenkins.repo
 cj_repo_url_latest_lts: http://pkg.jenkins-ci.org/redhat-stable/jenkins.repo
+cj_repo_base_url_fixed_ver: "{{ cj_repo_base_url }}/redhat"
+
 cj_repo_key_url: http://pkg.jenkins.io/redhat/jenkins.io.key
 cj_pkg_url: http://pkg.jenkins.io/redhat
 cj_conf_file: /etc/sysconfig/jenkins
+cj_jenkins_deps:
+  - curl
+  - libselinux-python
+  - python-pip
+  - vim
+  - net-tools
+  - unzip
+  - vim

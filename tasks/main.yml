@@ -2,25 +2,23 @@
 # tasks file for ansible-role-custom-jenkins
 - block:
 
-  - name: "01 :: Include Debain / Redhat OS vars"
+  - name: "01 :: include Debain / Redhat OS vars"
     include_vars: "{{ ansible_os_family }}.yml"
-    tags:
-      - plugins
 
-  - name: "-01 :: Incase you want to cleanup the and start over ..."
+  - name: "-01 :: in case you want to cleanup the and start over ..."
     include: "cj-cleanup.yml"
-    when: ((cleanup is defined) and (cleanup | bool))
     static: no
+    when: ((cleanup is defined) and (cleanup | bool))
 
-  - name: "02.1 :: Define cj_repo_url fact to {{ cj_repo_url_latest_lts }}"
+  - name: "02.1 :: define cj_repo_url fact to {{ cj_repo_url_latest_lts }}"
     set_fact:
       cj_repo_url: "{{ cj_repo_url_latest_lts }}"
-    when: cj_version == 'latest-LTS'
+    when: cj_channel == 'latest-LTS'
 
   - name: "02.2 :: Define cj_repo_url fact to {{ cj_repo_url_gratest_n_latest }}"
     set_fact:
       cj_repo_url: "{{ cj_repo_url_gratest_n_latest }}"
-    when: cj_version == 'latest'
+    when: cj_channel == 'latest'
 
   - name: "03 :: Include Debain / Redhat OS installaion method"
     include: "cj-install_{{ ansible_os_family }}.yml"
@@ -31,14 +29,12 @@
       dest: "{{ cj_conf_file }}"
       mode: 0755
     register: config_changed
-    tags:
-      - plugins
 
-  - name: "06 :: Configure Jenkins Proxy - if needed"
+  - name: "06 :: Configure Jenkins Proxy - if cj_set_proxy is set"
     include: "cj-proxy.yml"
     when: (cj_set_proxy is defined) and (cj_set_proxy | bool)
 
-  - name: "-06 :: Remove proxy config - if requested"
+  - name: "-06 :: Remove proxy config - if cj_remove_proxy is set"
     file:
       dest: "{{ cj_home }}/proxy.xml"
       state: absent
@@ -57,37 +53,22 @@
 
   - name: "10 :: install recommanded plugins"
     include: "cj-plugins-online-install.yml"
-    tags:
-      - plugins
 
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
     include: "cj-init_config.yml"
-    tags:
-      - auth
 
   - name: "08 :: Add ssh public key of {{ cj_runas_user }} user to user {{ cj_local_admin_users[0].username }} properties in Jenkins"
     include: "cj-add-public-key-to-admin-user.yml"
-
-  - name: "09 :: Check auth status"
-    include: "cj-auth_check.yml"
-
-  - name: "09.1 :: Cli Login"
-    include: "cj-cli-login.yml"
 
   - name: "Add credentials"
     include: "cj-add-all-credentials.yml"
 
   - name: "Create Jenkins nodes"
     include: "cj-add-nodes.yml"
-    tags:
-      - mytest
     when: ((cj_nodes_create is defined) and (cj_nodes_create | bool))
 
   - name: "Add JDK-s to tools"
     include: "cj-add-tools-jdks.yml"
-    tags:
-      - mytest
-      - always
 
   ### configure look & feel
   - name: "11 :: Enable jenkins material theme - if requested config & restart"
