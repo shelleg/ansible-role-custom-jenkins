@@ -24,6 +24,15 @@
     line: 'keepcache=1'
   when: cj_set_proxy is not defined
 
+- name: "Set proxy in yum.conf"
+  lineinfile:
+    dest: /etc/yum.conf
+    state: present
+    regexp: '^proxy='
+    line: 'proxy=http://{{ cj_proxy_host }}:{{ cj_proxy_port }}'
+  when: (cj_set_proxy is defined) and (cj_set_proxy | bool)
+
+
 - name: "Download specific Jenkins version"
   get_url:
     url: "{{ cj_repo_base_url_fixed_ver }}/jenkins-{{ cj_version }}-1.1.noarch.rpm"
