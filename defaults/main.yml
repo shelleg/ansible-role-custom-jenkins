@@ -1,6 +1,10 @@
 ---
 # defaults file for ansible-role-custom-jenkins
 
+# Pipeline flow mode (Dev by default). -> Custom-pipe
+build_ceph: false     # Deploy ceph
+dev_mode: true        # False means prod.
+
 # Listen port
 cj_http_port: 8080
 

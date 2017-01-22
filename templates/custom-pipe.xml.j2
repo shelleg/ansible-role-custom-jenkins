@@ -12,7 +12,6 @@
     <script>stage(&apos;init&apos;) {
     node (&quot;localroot&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh init&apos;
-	sh &apos;/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&apos;
     }
 }
 stage(&apos;reqs&apos;) {
@@ -20,9 +19,12 @@ stage(&apos;reqs&apos;) {
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh reqs&apos;
     }
 }
+{% set build_ceph = groupvars['localhost']['build_ceph'] | bool %}
+{% set dev_mode = groupvars['localhost']['pipe_mode'] | bool %}
+{% if dev_mode == true %}
 stage(&apos;image&apos;) {
     node (&quot;localroot&quot;){
-        sh &apos;cd /opt/tikal/deploy; ./deploy.sh image iso&apos;
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh image img&apos;
     }
 }
 
@@ -41,16 +43,25 @@ stage(&apos;java&apos;) {
         sh &apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;
     }
 }
-stage(&apos;repository&apos;) {
+{% endif %}
+        stage(&apos;repository&apos;) {
     node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh repository&apos;
     }
 }
+{% if dev_mode == true %}
 stage(&apos;server&apos;) {
     node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh server&apos;
     }
 }
+{% else %}
+stage(&apos;server&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh server onpremise&apos;
+    }
+}
+{% endif %}
 stage(&apos;pubkey&apos;) {
     node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh pubkey&apos;
@@ -67,20 +78,28 @@ stage(&apos;base&apos;) {
     }
 }
 stage(&apos;consul&apos;) {
-    node (&apos;sanjer&apos;){
+    node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh consul&apos;
     }
 }
+{% if build_ceph == true %}
+stage(&apos;ceph&apos;) {
+    node (&quot;sanjer&quot;){
+        sh &apos;cd /opt/tikal/deploy; ./deploy.sh ceph&apos;
+    }
+}
+{% endif %}
 stage(&apos;openstack&apos;) {
-    node (&apos;sanjer&apos;){
+    node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh openstack&apos;
     }
 }
 stage(&apos;logging&apos;) {
-    node (&apos;sanjer&apos;){
+    node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh logging&apos;
     }
 }
+
 </script>
     <sandbox>false</sandbox>
   </definition>
