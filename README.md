@@ -11,6 +11,7 @@ P.S I couldn;t of chosen a better icon/log myself ;) - Credits to -> [masanobu i
 State of Mind
 -------------
 **Automate everything !**
+* Stable version(s) - both package version [ Implemented ] and plugin [ Still WIP ]
 * Plugins
 * Authentication & Authorization [ Matrix || Github Auth || LDAP || Active Directory ]
 * 3rd party integrations such as: 
@@ -32,18 +33,20 @@ Java 1.8_x
 Features OOTB (Out Of The Box)
 ------------------------------
 
-1. Admin users [ "admin", "jjb" ] with corresponding passwords - recommended to use [Ansible vault](http://docs.ansible.com/ansible/playbooks_vault.html) for this
-2. 'Regular' users users [ "user1", "user2" ] with corresponding passwords (as mentioned probebly move th LDAP | Github auth in the near future)
-3. Matrix Authorization Strategy (More to come ...), granting admin users overall admin privileges and Overall Read for regular users and anonymous  
-4. "Wizard" plugins - the default plugins you would install following the Jenkins 2.x startup wizard
-5. "Goodies" plugins - stuff like [Greenballs](https://wiki.jenkins-ci.org/display/JENKINS/Green+Balls) (who dosen't use green balls ha ?!) 
-5. Jenkins proxy - **disabled by default** 
-6. [Still WIP] SSH Authorization - this is a prep for adding an ssh key via vault so we can start with git clone at the end of the play - see `tasks/cj-ssh-key.yml` it will reject an existing key if present in `~jenkins/.ssh` 
+1. Use latest-LTS and fix version to 2.32 [ which is the latest LTS release ]
+2. Admin users [ "admin", "jjb" ] with corresponding passwords - recommended to use [Ansible vault](http://docs.ansible.com/ansible/playbooks_vault.html) for this
+3. 'Regular' users users [ "user1", "user2" ] with corresponding passwords (as mentioned probebly move th LDAP | Github auth in the near future)
+4. Matrix Authorization Strategy (More to come ...), granting admin users overall admin privileges and Overall Read for regular users and anonymous  
+5. "Wizard" plugins - the default plugins you would install following the Jenkins 2.x startup wizard
+6. "Goodies" plugins - stuff like [Greenballs](https://wiki.jenkins-ci.org/display/JENKINS/Green+Balls) (who dosen't use green balls ha ?!) 
+7. Jenkins proxy - **disabled by default** 
+8. [Still WIP] SSH Authorization - this is a prep for adding an ssh key via vault so we can start with git clone at the end of the play - see `tasks/cj-ssh-key.yml` it will reject an existing key if present in `~jenkins/.ssh` 
 
 Role Variables & Defaults
 -------------------------
 * `cj_http_port: 8080` - https support when added will be done via nginx / apache2 
-* `cj_version: latest-LTS` - this controls what repository will the rpm/qpt be taken from see the `vars/{{ ansible_os_family }}.yml` to see the urls.
+* `cj_channel: latest-LTS` - this controls what repository will the rpm/qpt be taken from see the `vars/{{ ansible_os_family }}.yml` to see the urls.
+* `cj_version: '23.2'` - this controls what version to use -- **please note this overrides the latest v.s latest-LTS ...** considering the download base url for Latest & LTS is the same ...
 * `cj_application_context: ''` - defaults to none which is really `http://jenkins-host/` change it to your liking ...
 *  Jenkins directories used thought the role
 ```yamlex
@@ -131,6 +134,7 @@ Role Variables & Defaults
     cj_goodie_plugins:
       - { name: "greenballs" }
 ```
+**See also** the `vars\RedHat.yml` and `vars\Debian.yml` files for custom vars suach as package requirements
 
 Dependencies
 ------------
@@ -174,9 +178,20 @@ Custom Jenkins - disable defaults:
       roles:                                
         - role: oracle-java                 # install java 1.8
         - role: ansible-role-custom-jenkins # this role ...
-          cj_allow_anon_read: false    # no anonymous read !
-          cj_basic_auth: false         # no authentication !
-          cj_theme: false              # stay with classic jenkins ui  
+          cj_allow_anon_read: false         # no anonymous read !
+          cj_basic_auth: false              # no authentication !
+          cj_theme: false                   # stay with classic jenkins ui  
+
+Custom Jenkins - set version to install:
+
+    - hosts: custom-jenkins
+      become: true
+      roles:                                
+        - role: oracle-java                 # install java 1.8
+        - role: ansible-role-custom-jenkins # this role ...
+          cj_version: '2.37'                # this could be an LTS / non LTS release version !
+          cj_basic_auth: false              # no authentication !
+          cj_theme: false                   # stay with classic jenkins ui  
 
 Contributing
 ------------

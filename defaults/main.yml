@@ -8,8 +8,10 @@ dev_mode: true        # False means prod.
 # Listen port
 cj_http_port: 8080
 
-# could be latest || latest-LTS
-cj_version: latest-LTS
+cj_repo_base_url: 'https://pkg.jenkins.io/'
+
+cj_channel: latest-LTS # could be latest || latest-LTS
+cj_version: '2.32'
 
 # some like to see /jenkins as a suffix I don't ... ;)
 cj_application_context: ''
