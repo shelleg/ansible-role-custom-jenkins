@@ -1,5 +1,6 @@
 ---
 # tasks file for ansible-role-custom-jenkins
+
 - block:
 
   - name: "01 :: include Debain / Redhat OS vars"
@@ -49,8 +50,6 @@
   - name: "07 :: Create Custom Update site for to use specific versions of plugins"
     include: "cj-custom-update-site.yml"
     when: (cj_use_custom_update_site is defined) and (cj_use_custom_update_site | bool == true)
-    tags:
-      - mytest
 
   - name: "08 :: Service start & enable"
     include: "cj-restart-jenkins.yml"
