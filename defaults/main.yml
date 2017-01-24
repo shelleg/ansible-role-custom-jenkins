@@ -24,8 +24,11 @@ cj_plugins_tmp_folder: /tmp/plugins
 # use jenkins behind proxy
 # TODO: find a way to configure via groovy without authentication ... { already have template with auth }
 cj_set_proxy: false
-cj_proxy_host: "{{ proxy_server }}"
-cj_proxy_port: "{{ proxy_port |d('3148') }}"
+#cj_proxy_host: "{{ proxy_server }}"
+#cj_proxy_port: "{{ proxy_port |d('3148') }}"
+cj_proxy_host: localhost
+cj_proxy_port: 3148
+
 #cj_no_proxy_hosts: will be set in tasks
 cj_proxy_conf_file: "{{ cj_home }}/proxy.xml"
 # in case we want to test jenkins without a proxy when cj_set_proxy is set to true
@@ -195,3 +198,15 @@ cj_tools_jdks:
   - { name: "jdk-8u112", version: "jdk-8u112"}
   - { name: "jdk-8u92", version: "jdk-8u92"}
   - { name: "jdk-8u77", version: "jdk-8u77"}
+
+cj_installed_plugins_yml: "{{ playbook_dir }}/group_vars/dev/installed-plugins.yml"
+
+## cj_use_custom_update_site:
+##   false:
+##     - jenkins server will connect to default Update Site and take the latest plugins
+##   true:
+##     - custom update site will be created;
+##     - download plugins according to file {{ cj_installed_plugins_yml }} to the custom update site;
+##     - jenkins server will use only the custom site;
+##     So, only plugins (with specific versions) from file {{ cj_installed_plugins_yml }} will be available
+cj_use_custom_update_site: false

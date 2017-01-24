@@ -10,6 +10,8 @@
     list-plugins | awk '{print $1}'
   register: plugins_installed
   changed_when: false
+  become: true
+  become_user: "{{ cj_runas_user }}"
 
 - name: "Install Jenkins plugins | method implemented for online installations"
   command: >
@@ -20,6 +22,8 @@
   with_items:
     - "{{ cj_plugins }}"
   when: plugins_installed and plugins_installed.stdout.find('{{ item.name }}') == -1
+  become: true
+  become_user: "{{ cj_runas_user }}"
   until: ips.rc == 0
   retries: 10
   delay: 8

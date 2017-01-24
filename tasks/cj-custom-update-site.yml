@@ -1,0 +1,55 @@
+---
+# - configure update site with juseppe URL
+
+- fail:
+    msg: "Variable 'cj_use_custom_update_site' is not defined!"
+  when: (cj_use_custom_update_site is not defined)
+
+- name: "Set update site URL to default value"
+  set_fact:
+    cj_update_site_url: "http://updates.jenkins-ci.org/update-center.json"
+  when: cj_use_custom_update_site == false
+
+- name: "Set update site URL to default value"
+  set_fact:
+    cj_update_site_url: "http://{{ juseppe_docker_host_ip }}:{{ juseppe_host_port }}/update-center.json"
+  when: cj_use_custom_update_site == true
+
+- name: "Configure hudson.model.UpdateCenter.xml"
+  set_fact:
+    the_script: "update-UpdateCenter-xml.python"
+
+- name: "Generate Python script to update hudson.model.UpdateCenter.xml"
+  template:
+    src: "{{ the_script }}.j2"
+    dest: "/tmp/{{ the_script }}"
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
+
+- name: "Execute the script: /tmp/{{ the_script }}"
+  shell: >
+    python /tmp/{{ the_script }}
+  register: result
+  become: true
+  become_user: "{{ cj_runas_user }}"
+
+- block:
+
+  - file:
+      path: "{{ cj_home }}/update-center-rootCAs"
+      state: directory
+      mode: 0755
+
+  - file:
+      src: "{{ juseppe_cert_dir }}/{{ juseppe_cert_file }}"
+      dest: "{{ cj_home }}/update-center-rootCAs/{{ juseppe_cert_file }}"
+      state: link
+
+  when: cj_use_custom_update_site == true
+  become: true
+  become_user: "{{ cj_runas_user }}"
+
+- file:
+    path: "{{ cj_home }}/updates/default.json"
+    state: absent
+

@@ -40,6 +40,18 @@
       state: absent
     when: (cj_remove_proxy is defined) and (cj_remove_proxy | bool)
 
+  - name: "Service start & enable"
+    include: "cj-restart-jenkins.yml"
+
+  - name: "Stop jenkins"
+    service: name=jenkins state=stopped
+
+  - name: "07 :: Create Custom Update site for to use specific versions of plugins"
+    include: "cj-custom-update-site.yml"
+    when: (cj_use_custom_update_site is defined) and (cj_use_custom_update_site | bool == true)
+    tags:
+      - mytest
+
   - name: "08 :: Service start & enable"
     include: "cj-restart-jenkins.yml"
 
@@ -51,7 +63,7 @@
   - name: "04 :: Validate {{ cj_runas_user d('jenkins')}} has a valid ssh key"
     include: "cj-ssh_key.yml"
 
-  - name: "10 :: install recommanded plugins"
+  - name: "10 :: install recommended plugins"
     include: "cj-plugins-online-install.yml"
 
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"

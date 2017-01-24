@@ -1,0 +1,30 @@
+#!/bin/env python
+
+from xml.etree.ElementTree import parse, Element, SubElement
+
+the_file = "{{ cj_home }}/hudson.model.UpdateCenter.xml"
+doc = parse(the_file)
+root = doc.getroot()
+
+the_site = root.find('.//site[id="default"]')
+
+the_site.find('url').text="{{ cj_update_site_url }}"
+doc.write(the_file, xml_declaration=True)
+
+'''
+##print the_tag
+if ( the_tag is not None ):
+  #print "Need to update"
+  if ( the_tag.text.find(public_key) == -1 ):
+    print "The key will be added"
+    the_tag.text = the_tag.text + '\n' + public_key
+  else:
+    print "The key is already exist"
+    exit(0)
+else:
+  print "Need to create a new tag"
+  el1 = SubElement(properties, 'org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl')
+  el2 = SubElement(el1, 'authorizedKeys')
+  el2.text=public_key
+doc.write(user_file, xml_declaration=True)
+'''
