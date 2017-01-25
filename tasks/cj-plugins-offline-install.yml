@@ -1,0 +1,33 @@
+---
+
+- include: "cj-update_site.yml"
+- include: "cj-plugin_sets.yml"
+
+- name: "Service stop"
+  service:
+    name: jenkins
+    state: stopped
+
+- name: "Create cache dir"
+  file:
+    name: "{{ cj_plugins_tmp_folder }}"
+    state: directory
+    owner: root
+    group: root
+
+- name: "Get plugin to local cache dir"
+  get_url:
+    url: "http://mirrors.jenkins-ci.org/plugins/{{ item.name }}/{{ item.version }}/{{ item.name }}.{{ item.extention | d('hpi') }}"
+    dest: "{{ cj_plugins_tmp_folder }}"
+  with_items:
+- "{{ cj_plugins }}"
+
+- name: "Copy plugins to {{ cj_home }}/plugins"
+  copy:
+    src: "{{ cj_plugins_tmp_folder }}/"
+    dest: "{{ cj_home }}/plugins/"
+
+- name: "Service start"
+  service:
+    name: jenkins
+    state: started

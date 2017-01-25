@@ -48,7 +48,6 @@ stage(&apos;repository&apos;) {
 }
 stage(&apos;server&apos;) {
     node (&quot;sanjer&quot;){
-        sh &apos;ip -s -s neigh flush all&apos;
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh server&apos;
     }
 }
@@ -60,6 +59,7 @@ stage(&apos;pubkey&apos;) {
 stage(&apos;net&apos;) {
     node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh net&apos;
+        sh &apos;ip -s -s neigh flush all&apos;
     }
 }
 stage(&apos;base&apos;) {

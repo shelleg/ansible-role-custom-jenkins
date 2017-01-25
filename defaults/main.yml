@@ -4,11 +4,12 @@
 # Pipeline flow mode (Dev by default). -> Custom-pipe
 build_ceph: false     # Deploy ceph
 dev_mode: true        # False means prod.
+cj_install_online_mode: true
 
 # Listen port
 cj_http_port: 8080
 
-cj_repo_base_url: 'https://pkg.jenkins.io/'
+  cj_repo_base_url: 'https://pkg.jenkins.io/'
 
 cj_channel: latest-LTS # could be latest || latest-LTS
 cj_version: '2.32'

@@ -53,6 +53,12 @@
 
   - name: "10 :: install recommanded plugins"
     include: "cj-plugins-online-install.yml"
+    when: cj_install_online_mode
+
+  - name: "10 :: install recommanded plugins"
+    include: "cj-plugins-offline-install.yml"
+    when: cj_install_online_mode not true
+
 
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
     include: "cj-init_config.yml"
