@@ -9,7 +9,10 @@ cj_install_online_mode: true
 # Listen port
 cj_http_port: 8080
 
-  cj_repo_base_url: 'https://pkg.jenkins.io/'
+cj_repo_base_url: 'https://pkg.jenkins.io/'
+
+# Nexus ip for offline installation TODO
+cj_nexus_url: '0.0.0.0'
 
 cj_channel: latest-LTS # could be latest || latest-LTS
 cj_version: '2.32'

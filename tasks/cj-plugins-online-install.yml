@@ -2,6 +2,7 @@
 
 - include: "cj-update_site.yml"
 - include: "cj-plugin_sets.yml"
+- include: "cj-auth_check.yml"
 
 - name: "get installed plugin list"
   shell: >

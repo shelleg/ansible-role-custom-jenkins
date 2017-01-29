@@ -1,6 +1,7 @@
 ---
 
 - include: "cj-update_site.yml"
+  cj_update_center_url: "{{ cj_nexus_url }}"
 - include: "cj-plugin_sets.yml"
 
 - name: "Service stop"
@@ -20,7 +21,7 @@
     url: "http://mirrors.jenkins-ci.org/plugins/{{ item.name }}/{{ item.version }}/{{ item.name }}.{{ item.extention | d('hpi') }}"
     dest: "{{ cj_plugins_tmp_folder }}"
   with_items:
-- "{{ cj_plugins }}"
+  - "{{ cj_plugins }}"
 
 - name: "Copy plugins to {{ cj_home }}/plugins"
   copy:
