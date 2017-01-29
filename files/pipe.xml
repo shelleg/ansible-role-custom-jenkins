@@ -29,7 +29,6 @@ stage(&apos;image&apos;) {
 stage(&apos;vagrant&apos;) {
     node (&quot;localroot&quot;){
         sh &apos;cd /root/.ssh; cat id_rsa.pub &gt; authorized_keys&apos;
-        sh &apos;cd /home/user/.ssh; cat id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys&apos;
         sh &apos;rm -f /root/.ssh/known_hosts&apos;
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh vagrant&apos;
         sh &apos;ssh-keyscan -H 10.0.10.1 &gt;&gt; ~/.ssh/known_hosts&apos;
@@ -59,6 +58,7 @@ stage(&apos;pubkey&apos;) {
 stage(&apos;net&apos;) {
     node (&quot;sanjer&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh net&apos;
+        sh &apos;ip -s -s neigh flush all&apos;
     }
 }
 stage(&apos;base&apos;) {
@@ -74,11 +74,6 @@ stage(&apos;consul&apos;) {
 stage(&apos;openstack&apos;) {
     node (&apos;sanjer&apos;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh openstack&apos;
-    }
-}
-stage(&apos;logging&apos;) {
-    node (&apos;sanjer&apos;){
-        sh &apos;cd /opt/tikal/deploy; ./deploy.sh logging&apos;
     }
 }
 </script>
