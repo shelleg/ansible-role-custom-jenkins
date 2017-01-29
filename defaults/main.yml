@@ -27,7 +27,7 @@ cj_set_proxy: false
 
 # Allow the proxy_server & proxy_port to be reflected from outside { coporate LAN || playbook || group_var }
 cj_proxy_host: "{{ proxy_server| d('localhost') }}"
-cj_proxy_port: "{{ proxy_port |d('3148') }}"
+cj_proxy_port: "{{ proxy_port |d('8080') }}"
 
 #cj_no_proxy_hosts: will be set in tasks
 cj_proxy_conf_file: "{{ cj_home }}/proxy.xml"
