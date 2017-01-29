@@ -4,12 +4,18 @@
 # Pipeline flow mode (Dev by default). -> Custom-pipe
 build_ceph: false     # Deploy ceph
 dev_mode: true        # False means prod.
+cj_install_online_mode: true
 
 # Listen port
 cj_http_port: 8080
 
-# could be latest || latest-LTS
-cj_version: latest-LTS
+cj_repo_base_url: 'https://pkg.jenkins.io/'
+
+# Nexus ip for offline installation TODO
+cj_nexus_url: '0.0.0.0'
+
+cj_channel: latest-LTS # could be latest || latest-LTS
+cj_version: '2.32'
 
 # some like to see /jenkins as a suffix I don't ... ;)
 cj_application_context: ''
