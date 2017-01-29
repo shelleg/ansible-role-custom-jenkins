@@ -12,7 +12,7 @@
     <script>stage(&apos;init&apos;) {
     node (&quot;localroot&quot;){
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh init&apos;
-        sh &apos;/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&apos;
+	sh &apos;/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&apos;
     }
 }
 stage(&apos;reqs&apos;) {
