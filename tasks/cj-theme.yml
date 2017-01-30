@@ -31,10 +31,10 @@
   register: theme_config
   when: (( item.name == "simple-theme-plugin" ) and ( item.enabled == "true" ))
 
-- name: "Restart Jenkins on theme config changes"
-  service:
-    name: jenkins
-    state: restarted
-  notify: "service jenkins restart"
-
-- meta: flush_handlers
+#- name: "Restart Jenkins on theme config changes"
+#  service:
+#    name: jenkins
+#    state: restarted
+#  notify: "service jenkins restart"
+#
+#- meta: flush_handlers

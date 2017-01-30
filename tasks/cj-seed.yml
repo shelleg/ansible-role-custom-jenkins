@@ -27,3 +27,5 @@
     build -s {{ item }}
   with_items:
     - seed
+  become: true
+  become_user: "{{ cj_runas_user }}"

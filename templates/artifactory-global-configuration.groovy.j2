@@ -1,0 +1,71 @@
+import org.jfrog.hudson.*
+import com.cloudbees.plugins.credentials.*
+def instance = jenkins.model.Jenkins.getInstance()
+def descriptor = instance.getDescriptorByType(org.jfrog.hudson.ArtifactoryBuilder.DescriptorImpl.class)
+//def servers = descriptor.getArtifactoryServers();
+List<ArtifactoryServer> servers = []
+
+descriptor.useCredentialsPlugin = {{ cj_artifactory_useCredentialsPlugin | ternary('true','false') }}
+descriptor.pushToBintrayEnabled = {{ cj_artifactory_pushToBintrayEnabled | ternary('true','false') }}
+
+
+def getCredentialsConfig = { String param_id ->
+	def result = null
+	if (param_id != null && param_id !="")
+	{
+		def creds = com.cloudbees.plugins.credentials.CredentialsProvider.lookupCredentials(
+						com.cloudbees.plugins.credentials.common.StandardUsernameCredentials.class,
+						instance,
+						null,
+						null
+						);
+		for (c in creds)
+		{
+			if (c.id == param_id)
+			{
+				return new CredentialsConfig(
+							c.getUsername(),
+							c.getPassword().toString(),
+				  			param_id);
+			}
+		}
+	}
+	else
+	{
+		return CredentialsConfig.EMPTY_CREDENTIALS_CONFIG;
+	}
+}
+
+
+def deployer
+def resolver
+def new_server
+
+{% for i in cj_artifactory_servers %}
+
+server_id = "{{ i.id }}"
+server_url = "{{ i.url }}"
+server_deployer_credentialsId = "{{ i.deployer_credentialsId }}"
+server_resolver_credentialsId = "{{ i.resolver_credentialsId }}"
+server_timeout = {{ i.timeout | d(300) }}
+server_bypassProxy = {{ i.bypassProxy | ternary('true','false') }}
+
+deployer = getCredentialsConfig(server_deployer_credentialsId);
+resolver = getCredentialsConfig(server_resolver_credentialsId);
+
+println ("server_id = " + server_id + "; server_url = " + server_url);
+
+new_server = new ArtifactoryServer(
+     server_id, server_url,
+     deployer, resolver,
+	 server_timeout, server_bypassProxy);
+
+println ("new_server - " + new_server)
+
+servers.add(new_server);
+
+{% endfor %}
+println ("descriptor - " + descriptor)
+descriptor.setArtifactoryServers(servers);
+descriptor.save();
+instance.save();

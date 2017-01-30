@@ -160,6 +160,7 @@ cj_wizard_plugins:
   - { name: "subversion", version: "2.7.1", enabled: "true", extention: "hpi" }
   - { name: "ssh-slaves", version: "1.12", enabled: "true", extention: "hpi" }
   - { name: "email-ext", version: "2.53", enabled: "true", extention: "hpi"}
+  - { name: "artifactory", version: "2.9.0", enabled: "true", extention: "hpi"}
 
 cj_dsl_plugins:
   - { name: "job-dsl", version: "1.54", enabled: "true", extention: "hpi"}
@@ -180,14 +181,14 @@ cj_goodie_plugins:
 
 cj_nodes_credentials:
   - { name: "solaris-user", id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", username: "nodeuser", password: "test", description: "use this for solaris slaves" }
-  - { name: "linux-user", id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", username: "jenkins_user", password: "toor", description: "use this for solaris slaves" }
-  - { name: "aux-user", id: "4b2a3485-bf8b-429d-8b21-c19d6b60f198", username: "aux_jenkins_user", password: "tralala", description: "use this for AUX slaves" }
+  - { name: "linux-user", id:   "f112cc48-5e1b-4efe-9bb0-d1a902f67784", username: "jenkins_user", password: "toor", description: "use this for solaris slaves" }
+  - { name: "aux-user", id:     "4b2a3485-bf8b-429d-8b21-c19d6b60f198", username: "aux_jenkins_user", password: "tralala", description: "use this for AUX slaves" }
 
 cj_nodes_create: true
 cj_nodes:
   - { name: "linux01", host: "linux1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux02", host: "linux2.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux03", host: "linux3.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
+  - { name: "linux02", host: "linux2.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67783", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
+  - { name: "linux03", host: "linux3.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67782", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
   - { name: "solaris01", host: "solaris1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
   - { name: "windows01", host: "win01.domain.com", launcher_type: "jnlp", ssh_port: "", credential_id: "", home: "c:\\\\jenkins", labels: "windows", executors: "5", description: "windows slave" }
 
@@ -209,4 +210,13 @@ cj_installed_plugins_yml: "{{ playbook_dir }}/group_vars/dev/installed-plugins.y
 ##     - download plugins according to file {{ cj_installed_plugins_yml }} to the custom update site;
 ##     - jenkins server will use only the custom site;
 ##     So, only plugins (with specific versions) from file {{ cj_installed_plugins_yml }} will be available
-cj_use_custom_update_site: false
+cj_use_custom_update_site: true
+
+cj_artifactory_configure: true
+cj_artifactory_useCredentialsPlugin: true
+cj_artifactory_pushToBintrayEnabled: false
+cj_artifactory_servers:
+  - { id: "my_artifactory_server_1", url: "artifactory1.domain.com", deployer_credentialsId: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", resolver_credentialsId: "4b2a3485-bf8b-429d-8b21-c19d6b60f198", timeout: 300, bypassProxy: false }
+  - { id: "my_artifactory_server_2", url: "artifactory2.domain.com", deployer_credentialsId: "", resolver_credentialsId: "", timeout: 300, bypassProxy: false }
+
+

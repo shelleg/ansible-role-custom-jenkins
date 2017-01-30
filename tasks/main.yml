@@ -81,25 +81,22 @@
   - name: "Add JDK-s to tools"
     include: "cj-add-tools-jdks.yml"
 
+  - name: "Configure Artifactory plugin in Jenkins Global Configuration"
+    include: "cj-artifactory-global-configuration.yml"
+    when: (cj_artifactory_configure is defined) and (cj_artifactory_configure | bool)
+    tags:
+      - mytest
+
   ### configure look & feel
   - name: "11 :: Enable jenkins material theme - if requested config & restart"
     include: "cj-theme.yml"
     when: ((cj_theme is defined) and (cj_theme | bool))
     static: no
 
-  - block:
+  - name: "Restart Jenkins"
+    include: "cj-restart-jenkins.yml"
 
-    - name: "12.1 :: Check auth status"
-      include: "cj-auth_check.yml"
-
-    - name: "12.2 :: Cli Login"
-      include: "cj-cli-login.yml"
-
-    - name: "12.3 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
-      include: "cj-seed.yml"
-
+  - name: "12 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
+    include: "cj-seed.yml"
     when: ((cj_seed_demo is defined) and (cj_seed_demo | bool))
-
-  become: true
-  become_user: "{{ cj_runas_user }}"
 
