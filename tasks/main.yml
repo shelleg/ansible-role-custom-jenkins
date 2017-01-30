@@ -22,6 +22,11 @@
 
   - name: "03 :: Include Debain / Redhat OS installaion method"
     include: "cj-install_{{ ansible_os_family }}.yml"
+    when: cj_install_online_mode
+
+  - name: "03.1 :: Include Debian OFFLINE installation method"
+    include: "cj-install_offline.yml"
+    when: not cj_install_online_mode
 
   - name: "05 :: Configure Jenkins via {{ cj_conf_file }}"
     template:
@@ -57,7 +62,7 @@
 
   - name: "10 :: install recommanded plugins"
     include: "cj-plugins-offline-install.yml"
-    when: cj_install_online_mode not true
+    when: not cj_install_online_mode
 
 
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"

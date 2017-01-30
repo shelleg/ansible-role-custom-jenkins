@@ -4,6 +4,7 @@
 cj_repo_url_gratest_n_latest: "deb {{ cj_repo_base_url }}debian binary/"
 cj_repo_url_latest_lts: "deb {{ cj_repo_base_url }}debian-stable binary/"
 cj_repo_base_url_fixed_ver: "{{ cj_repo_base_url }}/debian/binary/"
+cj_repo_base_url_fixed_ver_nexus: "{{ cj_nexus_url }}/{{ cj_nexus_mirror }}/debian"
 cj_repo_key_url: http://pkg.jenkins.io/debian/jenkins.io.key
 cj_pkg_url: http://pkg.jenkins.io/debian/binary/
 cj_conf_file: /etc/default/jenkins

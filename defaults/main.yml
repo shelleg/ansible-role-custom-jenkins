@@ -4,15 +4,21 @@
 # Pipeline flow mode (Dev by default). -> Custom-pipe
 build_ceph: false     # Deploy ceph
 dev_mode: true        # False means prod.
-cj_install_online_mode: true
+
 
 # Listen port
 cj_http_port: 8080
 
 cj_repo_base_url: 'https://pkg.jenkins.io/'
 
-# Nexus ip for offline installation TODO
-cj_nexus_url: '0.0.0.0'
+# Nexus config
+cj_install_online_mode: true
+cj_nexus: true
+cj_nexus_ip: '192.168.1.9'
+cj_nexus_port: '8081'
+cj_nexus_url: 'http://{{ cj_nexus_ip }}:{{ cj_nexus_port }}'
+cj_nexus_mirror: 'repository/jenkins-mirror'
+cj_nexus_updates: 'repository/jenkins-updates'
 
 cj_channel: latest-LTS # could be latest || latest-LTS
 cj_version: '2.32'

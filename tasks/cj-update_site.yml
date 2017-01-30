@@ -1,4 +1,8 @@
 ---
+- set_fact:
+    cj_update_center_url: "{{ cj_nexus_url }}/{{ cj_nexus_updates }}"
+  when: cj_nexus
+
 - name: "Create Jenkins updates folder + plugins temporary download folder"
   file:
     path: "{{ item }}"
@@ -18,6 +22,8 @@
     group: "{{ cj_runas_group }}"
     mode: 0755
     validate_certs: false
+    url_username: "admin"
+    url_password: "changeme"
   register: update_site
 
 - name: "remove blank lines in default.json"
@@ -29,6 +35,13 @@
     group: "{{ cj_runas_group }}"
     mode: 0755
   when: update_site.changed
+
+- name: "Replace plugin provider url with nexus"
+  replace:
+    dest: "/tmp/default.json"
+    regexp: 'http://updates.jenkins-ci.org/'
+    replace: '{{ cj_nexus_url }}/{{ cj_nexus_updates }}/'
+  when: cj_nexus
 
 - include: "cj-auth_check.yml"
 

@@ -1,7 +1,6 @@
 ---
 
 - include: "cj-update_site.yml"
-  cj_update_center_url: "{{ cj_nexus_url }}"
 - include: "cj-plugin_sets.yml"
 
 - name: "Service stop"
@@ -18,7 +17,7 @@
 
 - name: "Get plugin to local cache dir"
   get_url:
-    url: "http://mirrors.jenkins-ci.org/plugins/{{ item.name }}/{{ item.version }}/{{ item.name }}.{{ item.extention | d('hpi') }}"
+    url: "{{ cj_nexus_url }}/{{ cj_nexus_mirror }}/plugins/{{ item.name }}/{{ item.version }}/{{ item.name }}.{{ item.extention | d('hpi') }}"
     dest: "{{ cj_plugins_tmp_folder }}"
   with_items:
   - "{{ cj_plugins }}"

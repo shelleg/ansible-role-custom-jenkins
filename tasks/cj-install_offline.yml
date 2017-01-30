@@ -13,23 +13,12 @@
   with_items:
     - "{{ cj_jenkins_deps }}"
 
-- name: "Add Jenkins apt Key"
-  apt_key:
-    url: "{{ cj_repo_key_url }}"
-    state: present
-  become: true
-
-- name: "Add Jenkins apt repo"
-  apt_repository:
-    repo: "{{ cj_repo_url }}"
-    state: present
-    update_cache: yes
-  become: true
-
 - name: "Download specific Jenkins version"
   get_url:
-    url: "{{ cj_repo_base_url_fixed_ver }}/jenkins_{{ cj_version }}_all.deb"
+    url: "{{ cj_repo_base_url_fixed_ver_nexus }}/jenkins_{{ cj_version }}_all.deb"
     dest: "/tmp/jenkins_{{ cj_version }}_all.deb"
+    url_username: "admin"
+    url_password: "changeme"
   register: cj_fixed_version
   when: cj_version is defined
 
