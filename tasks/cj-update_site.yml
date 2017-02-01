@@ -17,7 +17,7 @@
 - name: "Update Jenkins plugin update-center json"
   get_url:
     url: "{{ cj_update_center_url | d('https://updates.jenkins-ci.org') }}/update-center.json"
-    dest: "/tmp/default.json"
+    dest: "/tmp/{{ cj_uc_json }}"
     owner: "{{ cj_runas_user }}"
     group: "{{ cj_runas_group }}"
     mode: 0755
@@ -26,9 +26,15 @@
     url_password: "changeme"
   register: update_site
 
+- name: "remove 'postback' unnecessary string"
+  shell: sed -i 's/{{ item }}//g' /tmp/{{ cj_uc_json }}
+  with_items:
+  - 'updateCenter.post('
+  - ');'
+
 - name: "remove blank lines in default.json"
   lineinfile:
-    dest: "/tmp/default.json"
+    dest: "/tmp/{{ cj_uc_json }}"
     regexp: '^(?:[\t ]*(?:\r?\n|\r))+'
     state: absent
     owner: "{{ cj_runas_user }}"
@@ -38,13 +44,24 @@
 
 - name: "Replace plugin provider url with nexus"
   replace:
-    dest: "/tmp/default.json"
+    dest: "/tmp/{{ cj_uc_json }}"
     regexp: 'http://updates.jenkins-ci.org/'
     replace: '{{ cj_nexus_url }}/{{ cj_nexus_updates }}/'
   when: cj_nexus
 
-- include: "cj-auth_check.yml"
+- name: "Inject update-center.json"
+  copy:
+    src: '/tmp/{{ cj_uc_json }}'
+    dest: "{{ item }}"
+  with_items:
+  - "{{ cj_home }}/updates/{{ cj_uc_json }}"
+  - "{{ cj_usercont_dir }}/update-center.json"
 
-- name: "POST the default.json to Jenkins update url"
-  shell: >
-    cat /tmp/default.json | curl -X POST -H 'Accept: application/json' -d @- http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/updateCenter/byId/default/postBack --verbose
+- name: "deploy update site url"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ cj_home }}/{{ item }}"
+  with_items:
+  - 'hudson.model.UpdateCenter.xml'
+
+- include: "cj-restart-jenkins.yml"

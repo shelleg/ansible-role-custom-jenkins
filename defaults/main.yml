@@ -34,7 +34,8 @@ cj_init_dir: "{{ cj_home }}/init.groovy.d"
 cj_update_dir: "{{ cj_home }}/updates"
 cj_webroot: /var/cache/jenkins/war
 cj_plugins_tmp_folder: /tmp/plugins
-
+cj_usercont_dir: "{{ cj_home }}/userContent"
+cj_uc_json: "default.json"
 # use jenkins behind proxy
 # TODO: find a way to configure via groovy without authentication ... { already have template with auth }
 cj_set_proxy: false
