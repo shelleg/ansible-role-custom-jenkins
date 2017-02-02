@@ -1,7 +1,11 @@
 ---
 - set_fact:
     cj_update_center_url: "{{ cj_nexus_url }}/{{ cj_nexus_updates }}"
-  when: cj_nexus
+  when: cj_nexus and not cj_juseppe
+
+- set_fact:
+    cj_update_center_url: "{{ cj_juseppe_url }}"
+  when: cj_nexus and cj_juseppe
 
 - name: "Create Jenkins updates folder + plugins temporary download folder"
   file:

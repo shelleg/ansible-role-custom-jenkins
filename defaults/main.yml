@@ -11,9 +11,12 @@ cj_http_port: 8080
 
 cj_repo_base_url: 'https://pkg.jenkins.io/'
 
+# Juseppe config
+cj_juseppe: false
+
 # Nexus config
 cj_install_online_mode: true
-cj_nexus: true
+cj_nexus: false
 cj_nexus_ip: '' # Place nexus ip
 cj_nexus_port: '8081'
 cj_nexus_url: 'http://{{ cj_nexus_ip }}:{{ cj_nexus_port }}'
@@ -100,14 +103,14 @@ cj_setup_dsl_plugins: true
 cj_goodies: true
 
 # Categories:
-cj_base: true
+cj_base: false
 
-cj_github: true
+cj_github: false
 cj_blueocean: false
-cj_pipeline: true
-cj_workflow: true
+cj_pipeline: false
+cj_workflow: false
 
-cj_seed_demo: true
+cj_seed_demo: false
 
 cj_wizard_plugins:
   - { name: "jenkins-multijob-plugin", version: "1.23", enabled: "true", extention: "hpi" }

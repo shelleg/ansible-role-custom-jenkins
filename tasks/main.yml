@@ -64,7 +64,6 @@
     include: "cj-plugins-offline-install.yml"
     when: not cj_install_online_mode
 
-
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
     include: "cj-init_config.yml"
 
