@@ -14,7 +14,7 @@ cj_repo_base_url: 'https://pkg.jenkins.io/'
 # Nexus config
 cj_install_online_mode: true
 cj_nexus: true
-cj_nexus_ip: '192.168.1.9'
+cj_nexus_ip: '' # Place nexus ip
 cj_nexus_port: '8081'
 cj_nexus_url: 'http://{{ cj_nexus_ip }}:{{ cj_nexus_port }}'
 cj_nexus_mirror: 'repository/jenkins-mirror'
@@ -35,7 +35,8 @@ cj_update_dir: "{{ cj_home }}/updates"
 cj_webroot: /var/cache/jenkins/war
 cj_plugins_tmp_folder: /tmp/plugins
 cj_usercont_dir: "{{ cj_home }}/userContent"
-cj_uc_json: "default.json"
+cj_uc_json: "/tmp/default.json"
+
 # use jenkins behind proxy
 # TODO: find a way to configure via groovy without authentication ... { already have template with auth }
 cj_set_proxy: false
@@ -99,17 +100,17 @@ cj_setup_dsl_plugins: true
 cj_goodies: true
 
 # Categories:
-cj_base: false
+cj_base: true
 
-cj_github: false
+cj_github: true
 cj_blueocean: false
-cj_pipeline: false
-cj_workflow: false
+cj_pipeline: true
+cj_workflow: true
 
 cj_seed_demo: true
 
 cj_wizard_plugins:
-  - { name: "jenkins-multijob-plugin" }
+  - { name: "jenkins-multijob-plugin", version: "1.23", enabled: "true", extention: "hpi" }
   - { name: "bouncycastle-api", version: "2.16.0", enabled: "true", extention: "hpi" }
   - { name: "cloudbees-folder", version: "5.15", enabled: "true", extention: "hpi" }
   - { name: "structs", version: "1.5", enabled: "true", extention: "hpi" }
@@ -175,10 +176,10 @@ cj_wizard_plugins:
 
 cj_dsl_plugins:
   - { name: "job-dsl", version: "1.54", enabled: "true", extention: "hpi"}
-  - { name: "job-node-stalker" }
-  - { name: "jquery" }
+  - { name: "job-node-stalker", version: "1.0.5", enabled: "true", extention: "hpi" }
+  - { name: "jquery", version: "1.11.2-0", enabled: "true", extention: "hpi" }
   - { name: "workflow-cps-global-lib", version: "2.5", enabled: "true", extention: "hpi" }
-  - { name: "build-pipeline-plugin" }
+  - { name: "build-pipeline-plugin", version: "1.5.6", enabled: "true", extention: "hpi" }
 
 cj_setup_matrix_auth_strategy_plugins:
   - { name: "icon-shim", version: "2.0.3", enabled: "true", extention: "hpi" }
@@ -194,20 +195,12 @@ cj_nodes_sshkey_credentials:
   - {name: "Jenkins", id: "1ba43f0b-5cef-46b7-8d64-d1bd0a77e11a1", username: "root", password: "qwe123", description: "Root SSH key credentials", private_key: "{{ cj_home }}/.ssh/id_rsa"}
 
 cj_nodes_credentials:
-  - { name: "solaris-user", id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", username: "nodeuser", password: "test", description: "use this for solaris slaves" }
-  - { name: "linux-user", id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", username: "jenkins_user", password: "toor", description: "use this for solaris slaves" }
-  - { name: "aux-user", id: "4b2a3485-bf8b-429d-8b21-c19d6b60f198", username: "aux_jenkins_user", password: "tralala", description: "use this for AUX slaves" }
   - { name: "master-root", id: "6b2a3485-bf8b-429d-8b21-c19d6b60f196", username: "root", password: "qwe123", description: "use this for local root cred" }
 
 cj_nodes_create: true
 cj_nodes:
   - { name: "sanjer", host: "10.0.10.1", launcher_type: "ssh", ssh_port: "22", credential_id: "1ba43f0b-5cef-46b7-8d64-d1bd0a77e11a1", home: "/home/jenkins", labels: "sanjer", executors: "5", description: "sanjer slave" }
   - { name: "localroot", host: "localhost", launcher_type: "ssh", ssh_port: "22", credential_id: "6b2a3485-bf8b-429d-8b21-c19d6b60f196", home: "/home/jenkins", labels: "localroot", executors: "3", description: "localroot" }
-  - { name: "linux01", host: "linux1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux02", host: "linux2.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "linux03", host: "linux3.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "f112cc48-5e1b-4efe-9bb0-d1a902f67784", home: "/home/jenkins", labels: "linux", executors: "5", description: "linux slave" }
-  - { name: "solaris01", host: "solaris1.domain.com", launcher_type: "ssh", ssh_port: "22", credential_id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", home: "/home/jenkins", labels: "solaris", executors: "3", description: "solaris slave" }
-  - { name: "windows01", host: "win01.domain.com", launcher_type: "jnlp", ssh_port: "", credential_id: "", home: "c:\\\\jenkins", labels: "windows", executors: "5", description: "windows slave" }
 
 cj_oracle_account_username: "ivan.prokhorov@gmail.com"
 cj_oracle_account_password: "Abrasha200"

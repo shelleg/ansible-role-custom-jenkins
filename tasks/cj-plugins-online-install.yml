@@ -15,12 +15,8 @@
   command: >
     java -jar {{ cj_cli_jar_location }} \
     -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
-    install-plugin {{ item.name }}
+    install-plugin {{ cj_plugins | map(attribute='name') | join(' ') }}
   register: ips
-  with_items:
-    - "{{ cj_plugins }}"
-  when: plugins_installed and plugins_installed.stdout.find('{{ item.name }}') == -1
   until: ips.rc == 0
-  retries: 10
-  delay: 8
-
+  retries: 3
+  delay: 3

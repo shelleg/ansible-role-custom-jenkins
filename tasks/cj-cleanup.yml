@@ -7,7 +7,7 @@
   - "{{ cj_home }}"
   - "{{ cj_log_dir }}"
   - "{{ cj_cache_dir }}"
-  - /tmp/default.json
+  - "{{ cj_uc_json }}"
   tags:
   - cleanup
   notify: "stop jenkins"
