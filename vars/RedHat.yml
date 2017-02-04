@@ -15,4 +15,4 @@ cj_jenkins_deps:
   - vim
   - net-tools
   - unzip
-  - vim
+  - wget

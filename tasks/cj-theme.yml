@@ -29,7 +29,8 @@
   with_items:
     - "{{ cj_plugins }}"
   register: theme_config
-  when: (( item.name == "simple-theme-plugin" ) and ( item.enabled == "true" ))
+  when: item.name == "simple-theme-plugin"
+  #when: (( item.name == "simple-theme-plugin" ) and ( item.enabled == "true" ))
 
 #- name: "Restart Jenkins on theme config changes"
 #  service:
