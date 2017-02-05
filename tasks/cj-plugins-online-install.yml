@@ -3,6 +3,10 @@
 - include: "cj-update_site.yml"
 - include: "cj-plugin_sets.yml"
 
+- set_fact:
+    cj_plugins: "{{ cj_installed_plugins }}"
+  when: cj_use_custom_update_site
+
 - name: "get installed plugin list"
   shell: >
     java -jar {{ cj_cli_jar_location }} \
@@ -13,7 +17,7 @@
   become: true
   become_user: "{{ cj_runas_user }}"
 
-- name: "Install Jenkins plugins | method implemented for online installations"
+- name: "Install Jenkins plugins (by one cli command)"
   command: >
     java -jar {{ cj_cli_jar_location }} \
     -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
