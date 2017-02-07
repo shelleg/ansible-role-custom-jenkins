@@ -1,4 +1,12 @@
 ---
+- name: "Create tikal work dir"
+  file:
+    path: /opt/tikal
+    state: directory
+    owner: "{{ cj_runas_user }}"
+    group: "{{ cj_runas_group }}"
+    mode: 0755
+
 - name: "Delete seed job(s)"
   jenkins_job:
     name: "{{ item }}"

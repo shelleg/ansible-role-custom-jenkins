@@ -1,0 +1,191 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<project>
+  <actions/>
+  <description></description>
+  <keepDependencies>false</keepDependencies>
+  <properties/>
+  <scm class="hudson.scm.NullSCM"/>
+  <canRoam>true</canRoam>
+  <disabled>false</disabled>
+  <blockBuildWhenDownstreamBuilding>false</blockBuildWhenDownstreamBuilding>
+  <blockBuildWhenUpstreamBuilding>false</blockBuildWhenUpstreamBuilding>
+  <jdk>(System)</jdk>
+  <triggers/>
+  <concurrentBuild>false</concurrentBuild>
+  <builders>
+    <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.54">
+      <scriptText>job(&apos;OSTKL-init&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  label(&apos;localroot&apos;)
+  scm {
+    git {
+      remote {
+        name(&apos;origin&apos;)
+        url(&apos;git@github.com:tikalk/OSTK-playbook.git&apos;)
+        credentials(&apos;1ba43f0b-5cef-46b7-8d64-d1bd0a77e11a1&apos;)
+      }
+      branch(&apos;jenkins_rejects&apos;)
+    }
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh init&apos;)
+    shell(&apos;/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-reqs&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-reqs&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh reqs&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-image&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-image&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh image iso&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-vagrant&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-vagrant&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /root/.ssh; cat id_rsa.pub &gt; authorized_keys&apos;)
+    shell(&apos;rm -f /root/.ssh/known_hosts&apos;)
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh vagrant&apos;)
+    shell(&apos;ssh-keyscan -H 10.0.10.1 &gt;&gt; ~/.ssh/known_hosts&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-java&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-java&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
+  }
+  steps {
+    shell(&apos;sleep 90&apos;)
+    shell(&apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-repository&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-repository&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  label(&apos;sanjer&apos;)
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh repository&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-server&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-server&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh server&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-pubkey&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-pubkey&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh pubkey&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-net&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-net&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh net&apos;)
+    shell(&apos;ip -s -s neigh flush all&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-base&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-base&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh base&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-base&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-openstack&apos;) {
+  customWorkspace(&apos;/opt/tikal&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh openstack&apos;)
+  }
+}
+
+buildPipelineView(&apos;OSTKL-VIEW&apos;) {
+  filterBuildQueue()
+  filterExecutors()
+  title(&apos;Project A CI Pipeline&apos;)
+  displayedBuilds(5)
+  selectedJob(&apos;OSTKL-init&apos;)
+  alwaysAllowManualTrigger()
+  showPipelineParameters()
+  refreshFrequency(60)
+}</scriptText>
+      <usingScriptText>true</usingScriptText>
+      <ignoreExisting>false</ignoreExisting>
+      <ignoreMissingFiles>false</ignoreMissingFiles>
+      <failOnMissingPlugin>false</failOnMissingPlugin>
+      <unstableOnDeprecation>false</unstableOnDeprecation>
+      <removedJobAction>IGNORE</removedJobAction>
+      <removedViewAction>IGNORE</removedViewAction>
+      <lookupStrategy>JENKINS_ROOT</lookupStrategy>
+    </javaposse.jobdsl.plugin.ExecuteDslScripts>
+  </builders>
+  <publishers/>
+  <buildWrappers/>
+</project>
