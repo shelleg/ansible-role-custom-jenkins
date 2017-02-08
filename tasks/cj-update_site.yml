@@ -53,6 +53,7 @@
         dest: "{{ cj_uc_json }}"
         regexp: 'http://updates.jenkins-ci.org/'
         replace: '{{ cj_nexus_url }}/{{ cj_nexus_updates }}/'
+      when: not cj_juseppe
 
     - name: "Inject update-center.json"
       copy:

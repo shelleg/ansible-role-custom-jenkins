@@ -34,13 +34,13 @@ stage(&apos;vagrant&apos;) {
         sh &apos;cd /home/user/.ssh; cat id_rsa.pub &gt;&gt; /root/.ssh/authorized_keys&apos;
         sh &apos;rm -f /root/.ssh/known_hosts&apos;
         sh &apos;cd /opt/tikal/deploy; ./deploy.sh vagrant&apos;
-        sh &apos;ssh-keyscan -H 10.0.10.1 &gt;&gt; ~/.ssh/known_hosts&apos;
+        sh &apos;ssh-keyscan -H  &gt;&gt; ~/.ssh/known_hosts&apos;
     }
 }
 stage(&apos;java&apos;) {
     node (&quot;localroot&quot;){
         sh &apos;sleep 90&apos;
-        sh &apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;
+        sh &apos;ssh  &quot;sudo apt-get install default-jdk -y&quot;&apos;
     }
 }
 {% endif %}

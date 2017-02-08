@@ -5,6 +5,15 @@
 build_ceph: false     # Deploy ceph
 dev_mode: true        # False means prod.
 
+#------------------------------------------- SEED VARS -----------------------------------------#
+seed_work_dir: '/opt/tikal'
+seed_deploy_dir: '{{ seed_work_dir }}/deploy'
+seed_sanjer: '' # SET SANJER IP
+
+seed_job_list:
+  - seed
+  - pipe
+
 
 # Listen port
 cj_http_port: 8080
@@ -202,7 +211,7 @@ cj_nodes_credentials:
 
 cj_nodes_create: true
 cj_nodes:
-  - { name: "sanjer", host: "10.0.10.1", launcher_type: "ssh", ssh_port: "22", credential_id: "1ba43f0b-5cef-46b7-8d64-d1bd0a77e11a1", home: "/home/jenkins", labels: "sanjer", executors: "5", description: "sanjer slave" }
+  - { name: "sanjer", host: "{{ seed_sanjer }}", launcher_type: "ssh", ssh_port: "22", credential_id: "1ba43f0b-5cef-46b7-8d64-d1bd0a77e11a1", home: "/home/jenkins", labels: "sanjer", executors: "5", description: "sanjer slave" }
   - { name: "localroot", host: "localhost", launcher_type: "ssh", ssh_port: "22", credential_id: "6b2a3485-bf8b-429d-8b21-c19d6b60f196", home: "/home/jenkins", labels: "localroot", executors: "3", description: "localroot" }
 
 cj_oracle_account_username: "ivan.prokhorov@gmail.com"

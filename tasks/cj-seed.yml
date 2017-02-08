@@ -1,31 +1,25 @@
 ---
-- name: "Create tikal work dir"
-  file:
-    path: /opt/tikal
-    state: directory
-    owner: "{{ cj_runas_user }}"
-    group: "{{ cj_runas_group }}"
-    mode: 0755
-
 - name: "Delete seed job(s)"
   jenkins_job:
     name: "{{ item }}"
     user: "{{ cj_local_admin_users[0].username }}"
     password: "{{ cj_local_admin_users[0].password }}"
     state: absent
-  with_items:
-    - seed
-    - pipe
+  with_items: "{{ seed_job_list }}"
+
+- name: "deploy job templates"
+  template:
+    src: "{{ item }}.xml.j2"
+    dest: "/tmp/{{ item }}.xml"
+  with_items: "{{ seed_job_list }}"
 
 - name: "Create seed job(s)"
   jenkins_job:
-    config: "{{ lookup('file', 'files/{{ item }}.xml') }}"
+    config: "{{ lookup('file', '/tmp/{{ item }}.xml') }}"
     name: "{{ item }}"
     user: "{{ cj_local_admin_users[0].username }}"
     password: "{{ cj_local_admin_users[0].password }}"
-  with_items:
-    - seed
-    - pipe
+  with_items: "{{ seed_job_list }}"
 
 - include: "cj-restart-jenkins.yml"
 - meta: flush_handlers

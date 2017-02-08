@@ -14,7 +14,7 @@
   with_items:
     - update-user-xml.python
 
-- name: "Add root ssh-key to Jenkins"
+- name: "Add root ssh-key to Jenkins" # TODO Add same flow to cj_runas=true
   copy:
     src: "/root/.ssh/{{ item }}"
     dest: "{{ cj_home }}/.ssh/{{ item }}"
@@ -25,6 +25,7 @@
   with_items:
   - "id_rsa"
   - "id_rsa.pub"
+  when: not cj_runas
 
 - name: "Execute the script: /tmp/update-user-xml.python"
   shell: python /tmp/update-user-xml.python

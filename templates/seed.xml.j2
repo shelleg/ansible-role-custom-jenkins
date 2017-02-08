@@ -15,7 +15,7 @@
   <builders>
     <javaposse.jobdsl.plugin.ExecuteDslScripts plugin="job-dsl@1.54">
       <scriptText>job(&apos;OSTKL-init&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   label(&apos;localroot&apos;)
   scm {
     git {
@@ -28,7 +28,7 @@
     }
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh init&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh init&apos;)
     shell(&apos;/sbin/iptables -t nat -A POSTROUTING -o eth0 -j MASQUERADE&apos;)
   }
   publishers {
@@ -37,12 +37,12 @@
 }
 
 job(&apos;OSTKL-reqs&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh reqs&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh reqs&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-image&apos;,&apos;SUCCESS&apos;)
@@ -50,12 +50,12 @@ job(&apos;OSTKL-reqs&apos;) {
 }
 
 job(&apos;OSTKL-image&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh image iso&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh image iso&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-vagrant&apos;,&apos;SUCCESS&apos;)
@@ -63,15 +63,15 @@ job(&apos;OSTKL-image&apos;) {
 }
 
 job(&apos;OSTKL-vagrant&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
   }
   steps {
     shell(&apos;cd /root/.ssh; cat id_rsa.pub &gt; authorized_keys&apos;)
     shell(&apos;rm -f /root/.ssh/known_hosts&apos;)
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh vagrant&apos;)
-    shell(&apos;ssh-keyscan -H 10.0.10.1 &gt;&gt; ~/.ssh/known_hosts&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh vagrant&apos;)
+    shell(&apos;ssh-keyscan -H {{ seed_sanjer }} &gt;&gt; ~/.ssh/known_hosts&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-java&apos;,&apos;SUCCESS&apos;)
@@ -79,13 +79,13 @@ job(&apos;OSTKL-vagrant&apos;) {
 }
 
 job(&apos;OSTKL-java&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-init&apos;, true)
   }
   steps {
     shell(&apos;sleep 90&apos;)
-    shell(&apos;ssh 10.0.10.1 &quot;sudo apt-get install default-jdk -y&quot;&apos;)
+    shell(&apos;ssh {{ seed_sanjer }} &quot;sudo apt-get install default-jdk -y&quot;&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-repository&apos;,&apos;SUCCESS&apos;)
@@ -93,10 +93,10 @@ job(&apos;OSTKL-java&apos;) {
 }
 
 job(&apos;OSTKL-repository&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   label(&apos;sanjer&apos;)
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh repository&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh repository&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-server&apos;,&apos;SUCCESS&apos;)
@@ -104,12 +104,12 @@ job(&apos;OSTKL-repository&apos;) {
 }
 
 job(&apos;OSTKL-server&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh server&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh server&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-pubkey&apos;,&apos;SUCCESS&apos;)
@@ -117,12 +117,12 @@ job(&apos;OSTKL-server&apos;) {
 }
 
 job(&apos;OSTKL-pubkey&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh pubkey&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh pubkey&apos;)
   }
   publishers {
     downstream(&apos;OSTKL-net&apos;,&apos;SUCCESS&apos;)
@@ -130,12 +130,12 @@ job(&apos;OSTKL-pubkey&apos;) {
 }
 
 job(&apos;OSTKL-net&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh net&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh net&apos;)
     shell(&apos;ip -s -s neigh flush all&apos;)
   }
   publishers {
@@ -144,25 +144,38 @@ job(&apos;OSTKL-net&apos;) {
 }
 
 job(&apos;OSTKL-base&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh base&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh base&apos;)
   }
   publishers {
-    downstream(&apos;OSTKL-base&apos;,&apos;SUCCESS&apos;)
+    downstream(&apos;OSTKL-consul&apos;,&apos;SUCCESS&apos;)
+  }
+}
+
+job(&apos;OSTKL-consul&apos;) {
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
+  wrappers {
+    runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
+  }
+  steps {
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh consul&apos;)
+  }
+  publishers {
+    downstream(&apos;OSTKL-openstack&apos;,&apos;SUCCESS&apos;)
   }
 }
 
 job(&apos;OSTKL-openstack&apos;) {
-  customWorkspace(&apos;/opt/tikal&apos;);
+  customWorkspace(&apos;{{ seed_work_dir }}&apos;);
   wrappers {
     runOnSameNodeAs(&apos;OSTKL-repository&apos;, true)
   }
   steps {
-    shell(&apos;cd /opt/tikal/deploy; ./deploy.sh openstack&apos;)
+    shell(&apos;cd {{ seed_deploy_dir }}; ./deploy.sh openstack&apos;)
   }
 }
 
