@@ -34,7 +34,7 @@ Jenkins jenkins = Jenkins.instance
                     launcher,
                     //new SSHLauncher("{{ new_node.host }}", {{ new_node.ssh_port }} , "{{ new_node.credential_id }}", "","","","",  0,0,0),
                     //new JNLPLauncher(),
-                    new RetentionStrategy.Always(),
+                    new RetentionStrategy.Demand(0,30),
                     new LinkedList())
     if (need_update==1) {
       jenkins.updateNode(slave)
