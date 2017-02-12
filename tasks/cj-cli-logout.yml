@@ -1,9 +1,7 @@
 ---
-- name: "Jenkins login when auth is enabled"
+- name: "Jenkins logout"
   shell: >
     java -jar {{ cj_cli_jar_location }} \
     -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
-    -noKeyAuth login \
-    --username {{ cj_local_admin_users[0].username }} \
-    --password {{ cj_local_admin_users[0].password }}
+    -noKeyAuth logout
   when: (cj_auth_enabled is defined) and (cj_auth_enabled | bool)

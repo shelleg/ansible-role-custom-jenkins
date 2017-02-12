@@ -5,20 +5,29 @@
 
 - name: "Create Jenkins init script dir"
   file:
-    path: "{{ cj_home }}/init.groovy.d"
+    path: "{{ cj_init_dir }}"
     state: directory
     owner:  "{{ cj_runas_user }}"
     group:  "{{ cj_runas_group }}"
     mode: 0755
 
-- name: "Generate groovy script for jenkins bootstrap execution"
+- name: "Generate groovy script for Jenkins own use database authorization"
   template:
     src: "{{ item }}.j2"
     dest: "{{ cj_init_dir }}/{{ item }}"
     owner:  "{{ cj_runas_user }}"
     group:  "{{ cj_runas_group }}"
-  notify: "service jenkins restart"
   with_items:
-    - basic-security.groovy
+    - 00-basic-security.groovy
+  when: when: (cj_basic_auth is defined) and (cj_basic_auth | bool)
 
-- include: "cj-restart-jenkins.yml"
+- name: "Generate groovy script for Jenkins own use database authorization"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ cj_init_dir }}/{{ item }}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
+  with_items:
+    - 00-AD-security.groovy
+  when: (cj_AD_auth is defined) and (cj_AD_auth | bool)
+

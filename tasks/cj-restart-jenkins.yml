@@ -1,7 +1,60 @@
 ---
-- name: "restart jenkins"
+# TODO:
+# We should work in "Maintenance mode":
+# On Jenkins start execute "Prepare to shutdown"
+# Only last restart should leave it in working state
+
+- name: "Stop jenkins service"
   service:
     name: jenkins
-    state: restarted
+    state: stopped
 
-- include: "cj-wait-jenkins-is-up.yml"
+- name: "Create Jenkins init script dir"
+  file:
+    path: "{{ cj_init_dir }}"
+    state: directory
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
+    mode: 0755
+
+- name: "Copy groovy scripts to init.groovy.d"
+  template:
+    src: "{{ item }}.j2"
+    dest: "{{ cj_init_dir }}/{{ item }}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
+  with_items:
+    - 90-set-maintenance-mode.groovy
+    - 99-create-finish-file.groovy
+
+- command: "ls {{ cj_init_dir }}"
+  register: dir_out
+
+- debug: var={{ item }}
+  with_items: dir_out.stdout_lines
+
+- name: "Start jenkins service"
+  service:
+    name: jenkins
+    state: started
+
+- name: "Wait until Jenkins is up and running"
+  include: "cj-wait-jenkins-is-up.yml"
+
+- name: "Wait"
+  shell: "cat {{ cj_init_dir }}/{{ cj_init_finish_file }}"
+  ignore_errors: True
+  register: result
+  until: result.rc == 0
+  retries: 20
+  delay: 10
+
+- fail:
+    msg: "Failure - groovy scripts didn't run"
+  when: result.rc != 0
+
+
+- name: "Delete all bootstrap script from {{ cj_init_dir }}"
+  file:
+    state: absent
+    path: "{{ cj_init_dir }}/"

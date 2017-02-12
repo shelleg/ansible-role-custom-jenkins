@@ -1,0 +1,25 @@
+---
+- set_fact:
+    disable_security_script: disable-security.python
+    delete_public_key_script: delete-public-key-from-users.sh
+
+- name: "Disable security - copy script to remote host"
+  template:
+    src: "{{ item }}.j2"
+    dest: "/tmp/{{ item }}"
+    owner:  "{{ cj_runas_user }}"
+    group:  "{{ cj_runas_group }}"
+    mode: 0755
+  with_items:
+    - "{{ disable_security_script }}"
+    - "{{ delete_public_key_script }}"
+
+- name: "Execute script {{ disable_security_script }}"
+  shell: "python /tmp/{{ disable_security_script }}"
+  become: true
+  become_user: "{{ cj_runas_user }}"
+
+- name: "Remove jenkins user public key from all user profiles (config.xml) - {{ delete_public_key_script }}"
+  shell: "/tmp/{{ delete_public_key_script }}"
+  become: true
+  become_user: "{{ cj_runas_user }}"

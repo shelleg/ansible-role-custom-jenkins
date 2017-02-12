@@ -3,100 +3,135 @@
 
 - block:
 
-  - name: "01 :: include Debain / Redhat OS vars"
+  - name: "Include Debain / Redhat OS vars"
     include_vars: "{{ ansible_os_family }}.yml"
 
   - name: "-01 :: in case you want to cleanup the and start over ..."
     include: "cj-cleanup.yml"
     static: no
+    ## TODO: Use variable with name convention, i.e. cj_cleanup
     when: ((cleanup is defined) and (cleanup | bool))
 
-  - name: "02.1 :: define cj_repo_url fact to {{ cj_repo_url_latest_lts }}"
+  - name: "Define cj_repo_url fact to {{ cj_repo_url_latest_lts }}"
     set_fact:
       cj_repo_url: "{{ cj_repo_url_latest_lts }}"
     when: cj_channel == 'latest-LTS'
 
-  - name: "02.2 :: Define cj_repo_url fact to {{ cj_repo_url_gratest_n_latest }}"
+  - name: "Define cj_repo_url fact to {{ cj_repo_url_gratest_n_latest }}"
     set_fact:
       cj_repo_url: "{{ cj_repo_url_gratest_n_latest }}"
     when: cj_channel == 'latest'
 
-  - name: "03 :: Include Debain / Redhat OS installaion method"
+  - name: "Include Debain / Redhat OS installaion method"
     include: "cj-install_{{ ansible_os_family }}.yml"
 
-  - name: "05 :: Configure Jenkins via {{ cj_conf_file }}"
+  - name: "Configure Jenkins via {{ cj_conf_file }}"
     template:
       src: "jenkins-config-{{ ansible_os_family }}.j2"
       dest: "{{ cj_conf_file }}"
       mode: 0755
     register: config_changed
 
-  - name: "06 :: Configure Jenkins Proxy - if cj_set_proxy is set"
+  - name: "Configure Jenkins Proxy - if cj_set_proxy is set"
     include: "cj-proxy.yml"
     when: (cj_set_proxy is defined) and (cj_set_proxy | bool)
 
-  - name: "-06 :: Remove proxy config - if cj_remove_proxy is set"
+  - name: "- Remove proxy config - if cj_remove_proxy is set"
     file:
       dest: "{{ cj_home }}/proxy.xml"
       state: absent
     when: (cj_remove_proxy is defined) and (cj_remove_proxy | bool)
 
+  ## This step is important for clean installation
   - name: "Service start & enable"
     include: "cj-restart-jenkins.yml"
 
   - name: "Stop jenkins"
-    service: name=jenkins state=stopped
+    service:
+      name: jenkins
+      state: stopped
 
-  - name: "07 :: Create Custom Update site for to use specific versions of plugins"
+  - name: "Create Custom Update site for to use specific versions of plugins or set a default"
     include: "cj-custom-update-site.yml"
-    when: (cj_use_custom_update_site is defined) and (cj_use_custom_update_site | bool == true)
-
-  - name: "08 :: Service start & enable"
-    include: "cj-restart-jenkins.yml"
 
   become: true
   become_user: root
 
-- block:
+- name: "Validate {{ cj_runas_user d('jenkins')}} has a valid ssh key"
+  include: "cj-ssh_key.yml"
 
-  - name: "04 :: Validate {{ cj_runas_user d('jenkins')}} has a valid ssh key"
-    include: "cj-ssh_key.yml"
+#### Disable security on this stage
+####    Why? - In case the security method is changed (update flow), we still want to install the plugins in cli,
+####           but it may ne impossible (if 'main' admin user still not exists -
+####           we can't update it with 'jenkins 'public key and so on
+#### Clean jenkins-user public key from all users (if exists)
+#### Add the public key to the first user (if exists)
 
-  - name: "10 :: install recommended plugins"
-    include: "cj-plugins-online-install.yml"
+- name: "Disable security"
+  include: "cj-disable-security.yml"
 
-  - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
-    include: "cj-init_config.yml"
+- name: "Service start & enable"
+  include: "cj-restart-jenkins.yml"
 
-  - name: "08 :: Add ssh public key of {{ cj_runas_user }} user to user {{ cj_local_admin_users[0].username }} properties in Jenkins"
-    include: "cj-add-public-key-to-admin-user.yml"
+- name: "Install recommended plugins"
+  include: "cj-plugins-online-install.yml"
 
-  - name: "Add credentials"
-    include: "cj-add-all-credentials.yml"
+## This step creates groovy-script in init.groovy.d folder and requires restart
+- name: "Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
+  include: "cj-init_config.yml"
 
-  - name: "Create Jenkins nodes"
-    include: "cj-add-nodes.yml"
-    when: ((cj_nodes_create is defined) and (cj_nodes_create | bool))
+- name: "Service start & enable"
+  include: "cj-restart-jenkins.yml"
 
-  - name: "Add JDK-s to tools"
-    include: "cj-add-tools-jdks.yml"
+## we need once login in case of AD/LDAP authorization to have the user config.xml
+- name: "Login to Jenkins with user {{ cj_local_admin_users[0].username }}"
+  include: "cj-cli-login.yml"
 
-  - name: "Configure Artifactory plugin in Jenkins Global Configuration"
-    include: "cj-artifactory-global-configuration.yml"
-    when: (cj_artifactory_configure is defined) and (cj_artifactory_configure | bool)
-    tags:
-      - mytest
+- name: "Logout"
+  include: "cj-cli-logout.yml"
 
-  ### configure look & feel
-  - name: "11 :: Enable jenkins material theme - if requested config & restart"
-    include: "cj-theme.yml"
-    when: ((cj_theme is defined) and (cj_theme | bool))
-    static: no
+- name: "Stop jenkins"
+  service:
+    name: jenkins
+    state: stopped
+  become: true
+  become_user: root
 
-  - name: "Restart Jenkins"
-    include: "cj-restart-jenkins.yml"
 
-  - name: "12 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
-    include: "cj-seed.yml"
-    when: ((cj_seed_demo is defined) and (cj_seed_demo | bool))
+## Jenkins service should be stopped before this step
+- name: "Add ssh public key of {{ cj_runas_user }} user to user {{ cj_local_admin_users[0].username }} properties in Jenkins"
+  include: "cj-add-public-key-to-admin-user.yml"
 
+- name: "Service start & enable"
+  include: "cj-restart-jenkins.yml"
+
+- name: "Add credentials"
+  include: "cj-add-credential.yml"
+  with_items:
+    - "{{ cj_nodes_credentials }}"
+  loop_control:
+    loop_var: credential
+
+- name: "Create Jenkins nodes"
+  include: "cj-add-nodes.yml"
+  when: ((cj_nodes_create is defined) and (cj_nodes_create | bool))
+
+- name: "Add JDK-s to tools"
+  include: "cj-add-tools-jdks.yml"
+
+- name: "Configure Artifactory plugin in Jenkins Global Configuration"
+  include: "cj-artifactory-global-configuration.yml"
+  when: (cj_artifactory_configure is defined) and (cj_artifactory_configure | bool)
+
+### configure look & feel
+- name: "Enable jenkins material theme - if requested config & restart"
+  include: "cj-theme.yml"
+  when: ((cj_theme is defined) and (cj_theme | bool))
+  static: no
+
+- name: "Restart Jenkins"
+  include: "cj-restart-jenkins.yml"
+
+#- name: "12 :: Demo seed job(s) - if requested login, delete, import & trigger 1st build"
+#  include: "cj-seed.yml"
+#  when: ((cj_seed_demo is defined) and (cj_seed_demo | bool))

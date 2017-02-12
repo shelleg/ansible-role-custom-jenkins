@@ -1,0 +1,13 @@
+import jenkins.model.*
+import hudson.security.*
+import hudson.plugins.active_directory.*
+
+def instance = Jenkins.getInstance()
+String domain = '{{ cj_AD_auth_domain }}'
+String site = '{{ cj_AD_auth_site }}'
+String server = '{{ cj_AD_auth_server }}'
+String bindName = '{{ cj_AD_auth_bindName }}'
+String bindPassword = '{{ cj_AD_auth_bindPassword }}'
+adrealm = new ActiveDirectorySecurityRealm(domain, site, bindName, bindPassword, server)
+instance.setSecurityRealm(adrealm)
+instance.save()

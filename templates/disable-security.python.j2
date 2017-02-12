@@ -1,0 +1,22 @@
+#!/bin/env python
+
+from xml.etree.ElementTree import parse, Element, SubElement
+from os.path import expanduser
+home = expanduser("~")
+#from xml import etree
+config_file = "{{ cj_home }}/config.xml"
+doc = parse(config_file)
+root = doc.getroot()
+
+useSecurity = root.find('.//useSecurity')
+useSecurity.text = 'false'
+
+authorizationStrategy = root.find('.//authorizationStrategy')
+if (authorizationStrategy) :
+  root.remove(authorizationStrategy)
+
+securityRealm = root.find('.//securityRealm')
+if (securityRealm) :
+  root.remove(securityRealm)
+
+doc.write(config_file, xml_declaration=True)

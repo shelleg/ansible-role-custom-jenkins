@@ -17,6 +17,7 @@ cj_home: /var/lib/jenkins
 cj_log_dir: /var/log/jenkins
 cj_cache_dir: /var/cache/jenkins
 cj_init_dir: "{{ cj_home }}/init.groovy.d"
+cj_init_finish_file: "init.groovy.done"
 cj_update_dir: "{{ cj_home }}/updates"
 cj_webroot: /var/cache/jenkins/war
 cj_plugins_tmp_folder: /tmp/plugins
@@ -51,8 +52,22 @@ cj_runas_group: "{{ cj_custom_group | d('jenkins') }}"
 cj_runas_sudoer: true
 
 # Authorization strategy basic
-cj_allow_anon_read: true
 cj_basic_auth: true
+
+# AD authorization
+## we need only one 'master' admin user with password for first connection
+cj_AD_auth: false
+cj_AD_auth_domain: ''
+cj_AD_auth_site: ''
+cj_AD_auth_server: ''
+cj_AD_auth_bindName: ''
+cj_AD_auth_bindPassword: ''
+
+# LDAP authorization
+cj_LDAP_auth: false
+
+cj_allow_anon_read: true
+
 cj_local_admin_users:
   - { username: admin, password: admin }
   - { username: jjb, password: jjb }

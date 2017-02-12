@@ -49,6 +49,11 @@
     state: present
   register: cj_pkg_installed
 
+- name: "Set bash as a default shell for jenkins account"
+  user:
+    name: jenkins
+    shell: /bin/bash
+
 - name: "Install pip requierments"
   include: "cj-pip-reqs.yml"
 

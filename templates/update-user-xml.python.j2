@@ -14,13 +14,15 @@ properties = root.find('.//properties')
 the_tag = root.find('.//authorizedKeys')
 ##print the_tag
 if ( the_tag is not None ):
-  #print "Need to update"
-  if ( the_tag.text.find(public_key) == -1 ):
-    print "The key will be added"
-    the_tag.text = the_tag.text + '\n' + public_key
+  if (the_tag.text is None) :
+    the_tag.text = public_key
   else:
-    print "The key is already exist"
-    exit(0)
+    if (the_tag.text.find(public_key) == -1 ):
+      print "The key will be added"
+      the_tag.text = the_tag.text + '\n' + public_key
+    else:
+      print "The key is already exist"
+      exit(0)
 else:
   print "Need to create a new tag"
   el1 = SubElement(properties, 'org.jenkinsci.main.modules.cli.auth.ssh.UserPropertyImpl')

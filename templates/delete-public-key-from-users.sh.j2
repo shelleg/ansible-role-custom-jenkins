@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [ -d ~/users ]; then
+
+    cd ~/users
+    public_key=`cat ~/.ssh/id_rsa.pub`
+    for i in `find . -name config.xml`; do sed -i "s|${public_key}||g" ${i}; done
+fi
