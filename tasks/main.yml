@@ -86,9 +86,11 @@
 ## we need once login in case of AD/LDAP authorization to have the user config.xml
 - name: "Login to Jenkins with user {{ cj_local_admin_users[0].username }}"
   include: "cj-cli-login.yml"
+  when: (cj_AD_auth | bool) or (cj_LDAP_auth | bool)
 
 - name: "Logout"
   include: "cj-cli-logout.yml"
+  when: (cj_AD_auth | bool) or (cj_LDAP_auth | bool)
 
 - name: "Stop jenkins"
   service:

@@ -11,3 +11,16 @@ String bindPassword = '{{ cj_AD_auth_bindPassword }}'
 adrealm = new ActiveDirectorySecurityRealm(domain, site, bindName, bindPassword, server)
 instance.setSecurityRealm(adrealm)
 instance.save()
+
+def strategy = new hudson.security.ProjectMatrixAuthorizationStrategy()
+{% for account in cj_local_admin_users %}
+strategy.add(Jenkins.ADMINISTER, "{{ account.username }}")
+{% endfor %}
+{% if cj_allow_anon_read is defined %}
+strategy.add(hudson.model.View.READ, 'anonymous')
+strategy.add(hudson.model.Item.READ, 'anonymous')
+strategy.add(Jenkins.READ, 'anonymous')
+{% endif %}
+
+instance.setAuthorizationStrategy(strategy)
+instance.save()

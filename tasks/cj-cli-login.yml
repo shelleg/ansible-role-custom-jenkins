@@ -6,4 +6,4 @@
     -noKeyAuth login \
     --username {{ cj_local_admin_users[0].username }} \
     --password {{ cj_local_admin_users[0].password }}
-  when: (cj_auth_enabled is defined) and (cj_auth_enabled | bool)
+

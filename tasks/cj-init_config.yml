@@ -19,9 +19,9 @@
     group:  "{{ cj_runas_group }}"
   with_items:
     - 00-basic-security.groovy
-  when: when: (cj_basic_auth is defined) and (cj_basic_auth | bool)
+  when: (cj_basic_auth is defined) and (cj_basic_auth | bool)
 
-- name: "Generate groovy script for Jenkins own use database authorization"
+- name: "Generate groovy script for Active Directory authorization"
   template:
     src: "{{ item }}.j2"
     dest: "{{ cj_init_dir }}/{{ item }}"
@@ -30,4 +30,3 @@
   with_items:
     - 00-AD-security.groovy
   when: (cj_AD_auth is defined) and (cj_AD_auth | bool)
-

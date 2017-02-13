@@ -4,4 +4,3 @@
     java -jar {{ cj_cli_jar_location }} \
     -s http://{{ cj_cli_hostname }}:{{ cj_http_port }}{{ cj_application_context | default('') }}/ \
     -noKeyAuth logout
-  when: (cj_auth_enabled is defined) and (cj_auth_enabled | bool)
