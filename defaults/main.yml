@@ -111,7 +111,7 @@ cj_workflow: false
 
 cj_seed_demo: true
 
-cj_wizard_plugins:
+cj_plugins:
   - { name: "jenkins-multijob-plugin" }
   - { name: "bouncycastle-api", version: "2.16.0", enabled: "true", extention: "hpi" }
   - { name: "cloudbees-folder", version: "5.15", enabled: "true", extention: "hpi" }
@@ -176,23 +176,16 @@ cj_wizard_plugins:
   - { name: "ssh-slaves", version: "1.12", enabled: "true", extention: "hpi" }
   - { name: "email-ext", version: "2.53", enabled: "true", extention: "hpi"}
   - { name: "artifactory", version: "2.9.0", enabled: "true", extention: "hpi"}
-
-cj_dsl_plugins:
   - { name: "job-dsl", version: "1.54", enabled: "true", extention: "hpi"}
   - { name: "job-node-stalker" }
   - { name: "jquery" }
   - { name: "workflow-cps-global-lib", version: "2.5", enabled: "true", extention: "hpi" }
   - { name: "build-pipeline-plugin" }
-
-cj_setup_matrix_auth_strategy_plugins:
   - { name: "icon-shim", version: "2.0.3", enabled: "true", extention: "hpi" }
   - { name: "matrix-auth", version: "1.4", enabled: "true", extention: "hpi" }
-
-cj_theme_plugins:
   - { name: "simple-theme-plugin", version: "0.3", enabled: "true", extention: "hpi" }
-
-cj_goodie_plugins:
   - { name: "greenballs" }
+
 
 cj_nodes_credentials:
   - { name: "solaris-user", id: "8bf43f0b-5cef-46b7-8d64-d1bd0a77e11a9", username: "nodeuser", password: "test", description: "use this for solaris slaves" }
@@ -214,8 +207,6 @@ cj_tools_jdks:
   - { name: "jdk-8u112", version: "jdk-8u112"}
   - { name: "jdk-8u92", version: "jdk-8u92"}
   - { name: "jdk-8u77", version: "jdk-8u77"}
-
-cj_installed_plugins_yml: "{{ playbook_dir }}/group_vars/dev/installed-plugins.yml"
 
 ## cj_use_custom_update_site:
 ##   false:

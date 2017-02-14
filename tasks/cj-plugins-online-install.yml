@@ -1,7 +1,7 @@
 ---
 
 - include: "cj-update_site.yml"
-- include: "cj-plugin_sets.yml"
+##- include: "cj-plugin_sets.yml"
 
 - set_fact:
     cj_plugins: "{{ cj_installed_plugins }}"

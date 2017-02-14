@@ -3,25 +3,6 @@
   set_fact:
     cj_plugins: []
 
-- name: "Setting fact for cj_plugins -> wizard plugins"
-  set_fact:
-      cj_plugins: "{{ cj_wizard_plugins }}"
-  when: (cj_wizard is defined ) and (cj_wizard | bool)
-
-- name: "merge plugin lists -> jenkins theme"
-  set_fact:
-    cj_plugins: "{{ cj_plugins + cj_theme_plugins }}"
-  when: (cj_theme is defined) and (cj_theme | bool)
-
-- name: "merge plugin lists -> jenkins auth strategy"
-  set_fact:
-    cj_plugins: "{{ cj_plugins + cj_setup_matrix_auth_strategy_plugins }}"
-  when: (cj_setup_matrix_auth_strategy is defined) and (cj_setup_matrix_auth_strategy | bool)
-
-- name: "merge plugin lists -> jenkins DSL plugin"
-  set_fact:
-    cj_plugins: "{{ cj_plugins + cj_dsl_plugins }}"
-  when: (cj_setup_dsl_plugins is defined) and (cj_setup_dsl_plugins | bool)
 
 - block:
   - name: "Setting fact for cj_plugins -> base"
