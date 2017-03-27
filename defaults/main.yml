@@ -39,6 +39,7 @@ cj_version: '2.32'
 cj_application_context: ''
 
 # Directories used by Jenkins [ Apt || Rpm ]
+cj_download_dir: /tmp
 cj_home: /var/lib/jenkins
 cj_log_dir: /var/log/jenkins
 cj_cache_dir: /var/cache/jenkins

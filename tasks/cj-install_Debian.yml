@@ -29,13 +29,15 @@
 - name: "Download specific Jenkins version"
   get_url:
     url: "{{ cj_repo_base_url_fixed_ver }}/jenkins_{{ cj_version }}_all.deb"
-    dest: "/tmp/jenkins_{{ cj_version }}_all.deb"
+    dest: "{{ cj_download_dir }}/jenkins_{{ cj_version }}_all.deb"
+    validate_certs: no
+    force: no
   register: cj_fixed_version
   when: cj_version is defined
 
 - name: "Check the version of Jenkins"
   stat:
-    path: "/tmp/jenkins_{{ cj_version }}_all.deb"
+    path: "{{ cj_download_dir }}/jenkins_{{ cj_version }}_all.deb"
   register: cj_stat_version
   when: cj_version is defined
 
