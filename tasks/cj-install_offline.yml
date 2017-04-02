@@ -1,52 +1,25 @@
 ---
-- name: "Update apt cache"
-  apt:
-    update_cache: yes
-    cache_valid_time: 86400
-  retries: 10
-  delay: 3
-
 - name: "install deps"
   apt:
     name: "{{ item }}"
     state: installed
   with_items:
-    - "{{ cj_jenkins_deps }}"
-
-- name: "Download specific Jenkins version"
-  get_url:
-    url: "{{ cj_repo_base_url_fixed_ver_nexus }}/jenkins_{{ cj_version }}_all.deb"
-    dest: "/tmp/jenkins_{{ cj_version }}_all.deb"
-    url_username: "admin"
-    url_password: "changeme"
-  register: cj_fixed_version
-  when: cj_version is defined
-
-- name: "Check the version of Jenkins"
-  stat:
-    path: "/tmp/jenkins_{{ cj_version }}_all.deb"
-  register: cj_stat_version
-  when: cj_version is defined
-
-- name: "Install our specific version of Jenkins"
-  apt:
-    deb: "{{ cj_stat_version.stat.path }}"
-    state: installed
-  when: cj_version is defined and cj_stat_version.stat.exists
-
-- name: "Jenkins [ fixed version ] package installed !?"
-  apt:
-    deb: "{{ cj_stat_version.stat.path }}"
-    state: present
-  register: cj_pkg_installed
-  when: cj_version is defined and cj_stat_version.stat.exists
-
-- name: "Jenkins [ latest version ] package installed !?"
-  package:
-    name: jenkins
-    state: latest
-  when: cj_version is undefined
+    - python-httplib2
+    - python-pip
+    - acl
+    - vim
+    - curl
+    - unzip
 
 - name: "Install pip requierments"
   include: "cj-pip-reqs.yml"
+
+- name: "Install specific version of Jenkins"
+  apt:
+    deb: "{{ cj_download_dir }}/jenkins_{{ cj_version }}_all.deb"
+    state: installed
+  when: cj_version is defined
+
+
+
 
