@@ -7,6 +7,8 @@
     group: "{{ cj_runas_group }}"
     mode: 0755
     validate_certs: false
+    become: true
+    become_user: root
   register: theme_css
 
 - name: "Cache the themes css and js in Jenkins userContent"
@@ -17,6 +19,8 @@
     group: "{{ cj_runas_group }}"
     mode: 0755
     validate_certs: false
+    become: true
+    become_user: root
   register: theme_js
 
 - name: "update Jenkins theme setting"

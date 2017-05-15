@@ -51,11 +51,17 @@
   - name: "04 :: Validate {{ cj_runas_user d('jenkins')}} has a valid ssh key"
     include: "cj-ssh_key.yml"
 
-  - name: "10 :: install recommanded plugins"
-    include: "cj-plugins-online-install.yml"
-
   - name: "07 :: Configure Jenkins Authentication & Authorization [known to do nothing on 1st run]"
     include: "cj-init_config.yml"
+
+  - name: "Disable security"
+    include: "cj-disable-security.yml"
+
+  - name: "Service start & enable"
+    include: "cj-restart-jenkins.yml"
+
+  - name: "10 :: install recommanded plugins"
+    include: "cj-plugins-online-install.yml"
 
   - name: "08 :: Add ssh public key of {{ cj_runas_user }} user to user {{ cj_local_admin_users[0].username }} properties in Jenkins"
     include: "cj-add-public-key-to-admin-user.yml"
